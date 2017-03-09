@@ -1,5 +1,7 @@
 # toggl-reporter
 
+![screenshot](assets/screenshot.png)
+
 Small SpringBoot, Vaadin-Application that stores fetched TimeEntries in a MongoDb and allows to perfrom more detailed reports then possible within toggl itself.
 
 ## usage
