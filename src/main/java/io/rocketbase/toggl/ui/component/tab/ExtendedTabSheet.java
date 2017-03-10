@@ -5,10 +5,11 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.themes.ValoTheme;
 
 
-public class ExtendedTabSheet extends CustomComponent {
+public class ExtendedTabSheet<T> extends CustomComponent {
 
     private TabSheet tabSheet;
     private AbstractTab currentTab;
+    private T filter;
 
     public ExtendedTabSheet() {
         setSizeFull();
@@ -44,6 +45,15 @@ public class ExtendedTabSheet extends CustomComponent {
             currentTab = tab;
         }
         return this;
+    }
+
+    public T getFilter() {
+        return filter;
+    }
+
+    public void setFilterAndRefresh(T filter) {
+        this.filter = filter;
+        triggerTabEnter();
     }
 
 }

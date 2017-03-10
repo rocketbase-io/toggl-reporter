@@ -75,7 +75,7 @@ public class TimeEntryService {
         queryResult.forEach(e -> {
             e.getUserTimeEntriesMap()
                     .forEach((userId, timeEntries) -> {
-                        result.putIfAbsent(userId, new UserTimeline(togglService.getUserById(userId)));
+                        result.putIfAbsent(userId, new UserTimeline(togglService.getUserById(userId), yearMonth));
                         result.get(userId)
                                 .addTimeEntries(e.getDate(), timeEntries);
                     });

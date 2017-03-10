@@ -12,6 +12,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 import io.rocketbase.toggl.backend.config.TogglService;
 import io.rocketbase.toggl.ui.component.MainScreen;
+import io.rocketbase.toggl.ui.view.setting.SettingView;
 import org.vaadin.viritin.button.MButton;
 import org.vaadin.viritin.fields.MTextField;
 import org.vaadin.viritin.layouts.MVerticalLayout;
@@ -71,7 +72,7 @@ public class MainUI extends UI {
 
                         UI.getCurrent()
                                 .getNavigator()
-                                .navigateTo("");
+                                .navigateTo(SettingView.VIEW_NAME);
                     } catch (Exception exp) {
                         Notification.show("invalid api-token", Notification.Type.ERROR_MESSAGE);
                     }

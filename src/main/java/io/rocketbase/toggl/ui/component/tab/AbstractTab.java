@@ -9,11 +9,11 @@ import lombok.Setter;
 /**
  * Created by marten on 30.01.17.
  */
-public abstract class AbstractTab extends CustomComponent {
+public abstract class AbstractTab<T> extends CustomComponent {
 
     @Setter(AccessLevel.PACKAGE)
     @Getter(AccessLevel.PROTECTED)
-    private ExtendedTabSheet tabSheet;
+    private ExtendedTabSheet<T> tabSheet;
 
     private boolean initialized = false;
 

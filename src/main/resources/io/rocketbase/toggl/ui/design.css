@@ -12,3 +12,28 @@
     height: 37px;
     border: 1px solid #c5c5c5;
 }
+
+.v-label.info {
+    font-weight: bold;
+}
+
+.v-label.info.left-right {
+    text-align: right;
+    display: inline-block;
+    position: relative;
+}
+
+.v-label.info span {
+    font-weight: normal;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.v-label.info.left-right span {
+    position: absolute;
+    left: 0;
+}
+
+.v-widget.cell-content-wrapper {
+    padding: 5px 2px;
+}

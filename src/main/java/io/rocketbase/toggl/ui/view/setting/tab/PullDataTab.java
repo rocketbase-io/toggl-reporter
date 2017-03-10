@@ -7,12 +7,11 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import io.rocketbase.toggl.backend.config.TogglService;
 import io.rocketbase.toggl.backend.model.DateTimeEntryGroupModel;
+import io.rocketbase.toggl.backend.model.report.UserTimeline;
 import io.rocketbase.toggl.backend.service.FetchAndStoreService;
 import io.rocketbase.toggl.backend.service.TimeEntryService;
 import io.rocketbase.toggl.ui.component.tab.AbstractTab;
 import org.joda.time.Period;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
 import org.vaadin.viritin.MSize;
 import org.vaadin.viritin.button.MButton;
 import org.vaadin.viritin.fields.MDateField;
@@ -34,16 +33,6 @@ import java.util.concurrent.atomic.AtomicLong;
 @SpringComponent
 public class PullDataTab extends AbstractTab {
 
-    PeriodFormatter fmt = new PeriodFormatterBuilder()
-            .printZeroNever()
-            .appendDays()
-            .appendSuffix(" day ", " days ")
-            .appendHours()
-            .appendSuffix(" hours ")
-            .printZeroAlways()
-            .appendMinutes()
-            .appendSuffix(" mins ")
-            .toFormatter();
 
     @Resource
     private TogglService togglService;
@@ -172,7 +161,7 @@ public class PullDataTab extends AbstractTab {
                                         .mapToLong(e -> e.getDuration())
                                         .sum());
                             });
-                    return fmt.print(new Period(totalMilliseconds.get()));
+                    return UserTimeline.PERIOD_FORMATTER.print(new Period(totalMilliseconds.get()));
                 })
                 .withProperties("workspace", "date", "fetched", "userCount", "totalTime")
                 .withColumnHeaders("workspace", "date", "fetched", "count of users", "total time")

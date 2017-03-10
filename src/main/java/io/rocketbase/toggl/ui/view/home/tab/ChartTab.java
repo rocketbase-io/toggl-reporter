@@ -1,4 +1,4 @@
-package io.rocketbase.toggl.ui.view.chart;
+package io.rocketbase.toggl.ui.view.home.tab;
 
 import com.byteowls.vaadin.chartjs.ChartJs;
 import com.byteowls.vaadin.chartjs.config.LineChartConfig;
@@ -9,20 +9,16 @@ import com.byteowls.vaadin.chartjs.options.Tooltips;
 import com.byteowls.vaadin.chartjs.options.scale.Axis;
 import com.byteowls.vaadin.chartjs.options.scale.CategoryScale;
 import com.byteowls.vaadin.chartjs.options.scale.LinearScale;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import io.rocketbase.toggl.backend.model.report.UserTimeline;
 import io.rocketbase.toggl.backend.service.TimeEntryService;
 import io.rocketbase.toggl.backend.util.YearMonthUtil;
-import io.rocketbase.toggl.ui.view.AbstractView;
+import io.rocketbase.toggl.ui.component.tab.AbstractTab;
+import io.rocketbase.toggl.ui.view.home.HomeView;
 import org.joda.time.YearMonth;
 import org.vaadin.viritin.MSize;
-import org.vaadin.viritin.fields.TypedSelect;
-import org.vaadin.viritin.label.MLabel;
-import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MPanel;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
@@ -30,49 +26,35 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by marten on 08.03.17.
- */
+
 @UIScope
-@SpringView(name = ChartView.VIEW_NAME)
-public class ChartView extends AbstractView {
-
-    public static final String VIEW_NAME = "";
-
-    private static final MVerticalLayout PLACEHOLDER = new MVerticalLayout()
-            .add(new MLabel("select year month").withStyleName("text-center", "placeholder"), Alignment.MIDDLE_CENTER)
-            .withSize(MSize.FULL_SIZE);
+@SpringComponent
+public class ChartTab extends AbstractTab<YearMonth> {
 
     @Resource
     private TimeEntryService timeEntryService;
 
-    private MPanel chartPanel = new MPanel(PLACEHOLDER).withSize(MSize.FULL_SIZE);
-
-
-    public ChartView() {
-        super(VIEW_NAME, "Chart", FontAwesome.LINE_CHART, 0);
-    }
+    private MPanel panel;
 
     @Override
-    public Component initialzeUi() {
+    public Component initLayout() {
+        panel = new MPanel(HomeView.getPlaceHolder())
+                .withSize(MSize.FULL_SIZE);
+
         return new MVerticalLayout()
-                .add(new MHorizontalLayout()
-                        .add(new TypedSelect<>(YearMonth.class).asComboBoxType()
-                                .setBeans(timeEntryService.fetchAllMonth())
-                                .setNullSelectionAllowed(false)
-                                .addMValueChangeListener(e -> {
-                                    if (e != null) {
-                                        chartPanel.setContent(genChart(e.getValue()));
-                                    } else {
-                                        chartPanel.setContent(PLACEHOLDER);
-                                    }
-                                })
-                                .withWidth("200px"), Alignment.MIDDLE_RIGHT)
-                        .withFullWidth())
-                .add(chartPanel, 1)
+                .add(panel, 1)
                 .withSize(MSize.FULL_SIZE);
     }
 
+    @Override
+    public void onTabEnter() {
+        YearMonth filter = getTabSheet().getFilter();
+        if (filter != null) {
+            panel.setContent(genChart(filter));
+        } else {
+            panel.setContent(HomeView.getPlaceHolder());
+        }
+    }
 
     protected Component genChart(YearMonth yearMonth) {
         LineChartConfig config = new LineChartConfig();
@@ -94,7 +76,7 @@ public class ChartView extends AbstractView {
                             .getName())
                             .backgroundColor(color)
                             .borderColor(color)
-                            .dataAsList(userTimeline.getHoursWorked(yearMonth))
+                            .dataAsList(userTimeline.getHoursWorked())
                             .fill(false));
         });
 
@@ -133,11 +115,11 @@ public class ChartView extends AbstractView {
                 .done();
 
         ChartJs chart = new ChartJs(config);
-        chart.addStyleName("chart-container");
+        chart.addStyleName("home-container");
         chart.setWidth("100%");
 
         return new MVerticalLayout()
-                .add(chart, Alignment.MIDDLE_CENTER, 1)
+                .add(chart, 1)
                 .withSize(MSize.FULL_SIZE);
     }
 }
