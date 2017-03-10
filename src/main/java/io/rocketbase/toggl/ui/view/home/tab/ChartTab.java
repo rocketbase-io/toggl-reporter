@@ -17,6 +17,7 @@ import io.rocketbase.toggl.backend.service.TimeEntryService;
 import io.rocketbase.toggl.backend.util.YearMonthUtil;
 import io.rocketbase.toggl.ui.component.tab.AbstractTab;
 import io.rocketbase.toggl.ui.view.home.HomeView;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.YearMonth;
 import org.vaadin.viritin.MSize;
 import org.vaadin.viritin.layouts.MPanel;
@@ -62,7 +63,13 @@ public class ChartTab extends AbstractTab<YearMonth> {
         config.data()
                 .labelsAsList(YearMonthUtil.getAllDatesOfMonth(yearMonth)
                         .stream()
-                        .map(d -> String.valueOf(d.getDayOfMonth()))
+                        .map(d -> {
+                            if (d.getDayOfWeek() > DateTimeConstants.FRIDAY) {
+                                return String.format("(%d)", d.getDayOfMonth());
+                            } else {
+                                return String.valueOf(d.getDayOfMonth());
+                            }
+                        })
                         .collect(Collectors.toList()));
 
         List<UserTimeline> userTimelineList = timeEntryService.getUserTimeLines(yearMonth);

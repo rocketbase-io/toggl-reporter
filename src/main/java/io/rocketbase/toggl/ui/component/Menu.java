@@ -1,6 +1,8 @@
 package io.rocketbase.toggl.ui.component;
 
-import com.vaadin.server.*;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.server.FontIcon;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
@@ -60,6 +62,7 @@ public class Menu extends CssLayout {
         menuPart.addComponent(top);
 
         // logout menu item
+        /*
         MenuBar logoutMenu = new MenuBar();
         logoutMenu.addItem("Logout", FontAwesome.SIGN_OUT, (MenuBar.Command) selectedItem -> {
             VaadinSession.getCurrent()
@@ -71,6 +74,7 @@ public class Menu extends CssLayout {
 
         logoutMenu.addStyleName("user-menu");
         menuPart.addComponent(logoutMenu);
+        */
 
         // button for toggling the visibility of the menu when on a small screen
         final Button showMenu = new Button("Menu", (ClickListener) event -> {
