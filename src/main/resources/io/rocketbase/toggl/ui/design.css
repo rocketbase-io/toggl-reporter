@@ -37,3 +37,274 @@
 .v-widget.cell-content-wrapper {
     padding: 5px 2px;
 }
+
+.v-filterselect-item-color-palette span {
+    padding-left: 23px;
+}
+
+.v-filterselect-item-color-palette:before {
+    content: " ";
+    width: 23px;
+    height: 23px;
+    border-radius: 4px;
+    position: absolute;
+    left: 1px;
+    top: 1px;
+    border: 1px solid #fff;
+}
+
+.v-filterselect-item-color-palette.color-palette-brick:before {
+    background-color: #a54e3c;
+}
+
+.v-filterselect-item-color-palette.color-palette-pomegrante:before {
+    background-color: #881f30;
+}
+
+.v-filterselect-item-color-palette.color-palette-cabernet:before {
+    background-color: #721432;
+}
+
+.v-filterselect-item-color-palette.color-palette-aubergine:before {
+    background-color: #5b1946;
+}
+
+.v-filterselect-item-color-palette.color-palette-indigo:before {
+    background-color: #461c5d;
+}
+
+.v-filterselect-item-color-palette.color-palette-plum:before {
+    background-color: #5c145e;
+}
+
+.v-filterselect-item-color-palette.color-palette-royal:before {
+    background-color: #97348a;
+}
+
+.v-filterselect-item-color-palette.color-palette-french-blue:before {
+    background-color: #3266ad;
+}
+
+.v-filterselect-item-color-palette.color-palette-teal:before {
+    background-color: #337b8d;
+}
+
+.v-filterselect-item-color-palette.color-palette-aquamarine:before {
+    background-color: #22586f;
+}
+
+.v-filterselect-item-color-palette.color-palette-marine:before {
+    background-color: #18456b;
+}
+
+.v-filterselect-item-color-palette.color-palette-navy:before {
+    background-color: #0e2e57;
+}
+
+.v-filterselect-item-color-palette.color-palette-lilac:before {
+    background-color: #ae9cc7;
+}
+
+.v-filterselect-item-color-palette.color-palette-orchid:before {
+    background-color: #985a9c;
+}
+
+.v-filterselect-item-color-palette.color-palette-cobalt:before {
+    background-color: #4099d4;
+}
+
+.v-filterselect-item-color-palette.color-palette-pool:before {
+    background-color: #9cd6f5;
+}
+
+.v-filterselect-item-color-palette.color-palette-periwinkle:before {
+    background-color: #a7b4d0;
+}
+
+.v-filterselect-item-color-palette.color-palette-dove:before {
+    background-color: #aec4d0;
+}
+
+.v-filterselect-item-color-palette.color-palette-duck-egg:before {
+    background-color: #97babf;
+}
+
+.v-filterselect-item-color-palette.color-palette-turquoise:before {
+    background-color: #6fbabf;
+}
+
+.v-filterselect-item-color-palette.color-palette-jade:before {
+    background-color: #73aba0;
+}
+
+.v-filterselect-item-color-palette.color-palette-tiffany:before {
+    background-color: #a5d2c1;
+}
+
+.v-filterselect-item-color-palette.color-palette-mint:before {
+    background-color: #c8e0c4;
+}
+
+.v-filterselect-item-color-palette.color-palette-spring:before {
+    background-color: #d3e2a3;
+}
+
+.v-filterselect-item-color-palette.color-palette-chive:before {
+    background-color: #b8d26e;
+}
+
+.v-filterselect-item-color-palette.color-palette-tree-top:before {
+    background-color: #759150;
+}
+
+.v-filterselect-item-color-palette.color-palette-bottle:before {
+    background-color: #378159;
+}
+
+.v-filterselect-item-color-palette.color-palette-emerald:before {
+    background-color: #29634e;
+}
+
+.v-filterselect-item-color-palette.color-palette-lemon:before {
+    background-color: #fef6a6;
+}
+
+.v-filterselect-item-color-palette.color-palette-sunshine:before {
+    background-color: #fcf151;
+}
+
+.v-filterselect-item-color-palette.color-palette-tumeric:before {
+    background-color: #f9d549;
+}
+
+.v-filterselect-item-color-palette.color-palette-clementine:before {
+    background-color: #f3b143;
+}
+
+.v-filterselect-item-color-palette.color-palette-peach:before {
+    background-color: #f7d19d;
+}
+
+.v-filterselect-item-color-palette.color-palette-salmon:before {
+    background-color: #f0b79f;
+}
+
+.v-filterselect-item-color-palette.color-palette-coral:before {
+    background-color: #e89487;
+}
+
+.v-filterselect-item-color-palette.color-palette-watermelon:before {
+    background-color: #e3708e;
+}
+
+.v-filterselect-item-color-palette.color-palette-rasberry:before {
+    background-color: #ac2c69;
+}
+
+.v-filterselect-item-color-palette.color-palette-magenta:before {
+    background-color: #db318a;
+}
+
+.v-filterselect-item-color-palette.color-palette-red-balloon:before {
+    background-color: #db3656;
+}
+
+.v-filterselect-item-color-palette.color-palette-fire-engine:before {
+    background-color: #db3732;
+}
+
+.v-filterselect-item-color-palette.color-palette-blood-orange:before {
+    background-color: #e06151;
+}
+
+.v-filterselect-item-color-palette.color-palette-papaya:before {
+    background-color: #e88b5b;
+}
+
+.v-filterselect-item-color-palette.color-palette-rose:before {
+    background-color: #e6aab3;
+}
+
+.v-filterselect-item-color-palette.color-palette-cherry-blossom:before {
+    background-color: #f6d6dc;
+}
+
+.v-filterselect-item-color-palette.color-palette-blush:before {
+    background-color: #f6d6d1;
+}
+
+.v-filterselect-item-color-palette.color-palette-french-vanilla:before {
+    background-color: #f8f1de;
+}
+
+.v-filterselect-item-color-palette.color-palette-ivory:before {
+    background-color: #fbf8da;
+}
+
+.v-filterselect-item-color-palette.color-palette-clay:before {
+    background-color: #e8d4b8;
+}
+
+.v-filterselect-item-color-palette.color-palette-sandstone:before {
+    background-color: #c4b199;
+}
+
+.v-filterselect-item-color-palette.color-palette-sage:before {
+    background-color: #a5b4a3;
+}
+
+.v-filterselect-item-color-palette.color-palette-moss:before {
+    background-color: #a2a495;
+}
+
+.v-filterselect-item-color-palette.color-palette-olive:before {
+    background-color: #7b7d6a;
+}
+
+.v-filterselect-item-color-palette.color-palette-smoke:before {
+    background-color: #63605c;
+}
+
+.v-filterselect-item-color-palette.color-palette-espresso:before {
+    background-color: #473937;
+}
+
+.v-filterselect-item-color-palette.color-palette-chocolate:before {
+    background-color: #684940;
+}
+
+.v-filterselect-item-color-palette.color-palette-caramel:before {
+    background-color: #957d62;
+}
+
+.v-filterselect-item-color-palette.color-palette-black:before {
+    background-color: #221f20;
+}
+
+.v-filterselect-item-color-palette.color-palette-charcoal:before {
+    background-color: #58585a;
+}
+
+.v-filterselect-item-color-palette.color-palette-slate:before {
+    background-color: #949599;
+}
+
+.v-filterselect-item-color-palette.color-palette-silver-lining:before {
+    background-color: #d1d2d4;
+}
+
+.v-filterselect-item-color-palette.color-palette-oyster:before {
+    background-color: #e3ddd4;
+}
+
+.v-filterselect-item-color-palette.color-palette-stone:before {
+    background-color: #d2cfc9;
+}
+
+.v-filterselect-item-color-palette.color-palette-smog:before {
+    background-color: #928b88;
+}
+
+.v-filterselect-item-color-palette.color-palette-white:before {
+    background-color: #ffffff;
+}

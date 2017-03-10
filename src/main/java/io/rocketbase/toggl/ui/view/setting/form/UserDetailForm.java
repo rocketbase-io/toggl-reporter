@@ -3,6 +3,7 @@ package io.rocketbase.toggl.ui.view.setting.form;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Image;
 import io.rocketbase.toggl.backend.model.ApplicationSettingModel.UserDetails;
@@ -10,6 +11,7 @@ import io.rocketbase.toggl.backend.util.ColorPalette;
 import org.vaadin.viritin.MBeanFieldGroup;
 import org.vaadin.viritin.fields.LabelField;
 import org.vaadin.viritin.fields.TypedSelect;
+import org.vaadin.viritin.fields.config.ComboBoxConfig;
 import org.vaadin.viritin.form.AbstractForm;
 import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
@@ -30,11 +32,18 @@ public class UserDetailForm extends AbstractForm<UserDetails> {
             .withWidth("37px")
             .withHeight("37px");
 
-    private TypedSelect<ColorPalette> graphColor = new TypedSelect<>(ColorPalette.class).asComboBoxType()
+    private TypedSelect<ColorPalette> graphColor = new TypedSelect<>(ColorPalette.class).asComboBoxType(ComboBoxConfig.build()
+            .withItemStyleGenerator((ComboBox.ItemStyleGenerator) (source, itemId) -> {
+                if (itemId instanceof ColorPalette) {
+                    return "color-palette " + ((ColorPalette) itemId).getStyleName();
+                }
+                return null;
+            }))
             .setNullSelectionAllowed(false)
             .setBeans(Arrays.asList(ColorPalette.values()))
             .setCaptionGenerator(e -> e.name()
-                    .toLowerCase())
+                    .toLowerCase()
+                    .replace("_", ""))
             .addMValueChangeListener(e -> {
                 colorBox.setValue(String.format("<div class=\"color-box\" style=\"background-color: #%s\"></div>",
                         e.getValue()
@@ -71,8 +80,8 @@ public class UserDetailForm extends AbstractForm<UserDetails> {
                                 .add(name)
                                 .add(email)
                                 .add(new MHorizontalLayout()
-                                        .add(colorBox)
-                                        .add(graphColor, 1)
+                                        .add(colorBox, Alignment.MIDDLE_CENTER)
+                                        .add(graphColor, Alignment.MIDDLE_CENTER, 1)
                                         .withFullWidth())
                                 .withMargin(false)
                                 .withFullWidth(), 2)
