@@ -1,6 +1,7 @@
 package io.rocketbase.toggl.backend.model;
 
 import ch.simas.jtoggl.domain.Workspace;
+import de.jollyday.HolidayCalendar;
 import io.rocketbase.toggl.backend.util.ColorPalette;
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -28,6 +29,8 @@ public class ApplicationSettingModel {
     private Map<Long, Workspace> workspaceMap;
 
     private Map<Long, UserDetails> userMap;
+
+    private HolidayCalendar holidayCalendar;
 
     @Data
     @RequiredArgsConstructor

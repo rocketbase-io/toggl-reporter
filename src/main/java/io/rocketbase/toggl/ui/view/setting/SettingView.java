@@ -7,7 +7,7 @@ import com.vaadin.ui.Component;
 import io.rocketbase.toggl.ui.component.tab.ExtendedTabSheet;
 import io.rocketbase.toggl.ui.view.AbstractView;
 import io.rocketbase.toggl.ui.view.setting.tab.PullDataTab;
-import io.rocketbase.toggl.ui.view.setting.tab.UserSettingTab;
+import io.rocketbase.toggl.ui.view.setting.tab.SettingTab;
 import org.vaadin.viritin.MSize;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
@@ -26,7 +26,7 @@ public class SettingView extends AbstractView {
     private PullDataTab pullDataTab;
 
     @Resource
-    private UserSettingTab userSettingTab;
+    private SettingTab settingTab;
 
 
     public SettingView() {
@@ -37,7 +37,7 @@ public class SettingView extends AbstractView {
     public Component initialzeUi() {
         ExtendedTabSheet tabSheet = new ExtendedTabSheet();
         tabSheet.addTab("pull-data", pullDataTab);
-        tabSheet.addTab("user-settings", userSettingTab);
+        tabSheet.addTab("settings", settingTab);
 
 
         return new MVerticalLayout()

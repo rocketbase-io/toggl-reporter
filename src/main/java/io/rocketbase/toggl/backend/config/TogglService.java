@@ -5,6 +5,7 @@ import ch.simas.jtoggl.domain.User;
 import ch.simas.jtoggl.domain.Workspace;
 import com.timgroup.jgravatar.Gravatar;
 import com.timgroup.jgravatar.GravatarDefaultImage;
+import de.jollyday.HolidayCalendar;
 import io.rocketbase.toggl.api.TogglReportApi;
 import io.rocketbase.toggl.api.TogglReportApiBuilder;
 import io.rocketbase.toggl.backend.model.ApplicationSettingModel;
@@ -28,11 +29,15 @@ import java.util.List;
 public class TogglService implements TogglReportApiBuilder.WorkspaceProvider {
 
     public static final Gravatar GRAVATAR = new Gravatar(64, Gravatar.DEFAULT_RATING, GravatarDefaultImage.IDENTICON);
+
     @Resource
     private ApplicationSettingRepository applicationSettingRepository;
+
     private ApplicationSettingModel applicationSettings;
+
     @Getter
     private JToggl jToggl;
+
     @Getter
     private TogglReportApi togglReportApi;
 
@@ -127,6 +132,16 @@ public class TogglService implements TogglReportApiBuilder.WorkspaceProvider {
     public void updateUser(UserDetails user) {
         applicationSettings.getUserMap()
                 .put(user.getUid(), user);
+        applicationSettingRepository.save(applicationSettings);
+    }
+
+    public HolidayCalendar getHolidayCalender() {
+        return applicationSettings.getHolidayCalendar();
+    }
+
+
+    public void updateHolidayCalendar(HolidayCalendar holidayCalendar) {
+        applicationSettings.setHolidayCalendar(holidayCalendar);
         applicationSettingRepository.save(applicationSettings);
     }
 }
