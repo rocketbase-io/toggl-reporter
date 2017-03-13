@@ -7,6 +7,7 @@ import com.vaadin.ui.Component;
 import io.rocketbase.toggl.ui.component.tab.ExtendedTabSheet;
 import io.rocketbase.toggl.ui.view.AbstractView;
 import io.rocketbase.toggl.ui.view.setting.tab.PullDataTab;
+import io.rocketbase.toggl.ui.view.setting.tab.SchedulingTab;
 import io.rocketbase.toggl.ui.view.setting.tab.SettingTab;
 import org.vaadin.viritin.MSize;
 import org.vaadin.viritin.layouts.MVerticalLayout;
@@ -28,6 +29,9 @@ public class SettingView extends AbstractView {
     @Resource
     private SettingTab settingTab;
 
+    @Resource
+    private SchedulingTab schedulingTab;
+
 
     public SettingView() {
         super(VIEW_NAME, "Setting", FontAwesome.GEARS, 100);
@@ -38,6 +42,7 @@ public class SettingView extends AbstractView {
         ExtendedTabSheet tabSheet = new ExtendedTabSheet();
         tabSheet.addTab("pull-data", pullDataTab);
         tabSheet.addTab("settings", settingTab);
+        tabSheet.addTab("scheduling", schedulingTab);
 
 
         return new MVerticalLayout()

@@ -9,6 +9,7 @@ import de.jollyday.HolidayCalendar;
 import io.rocketbase.toggl.api.TogglReportApi;
 import io.rocketbase.toggl.api.TogglReportApiBuilder;
 import io.rocketbase.toggl.backend.model.ApplicationSettingModel;
+import io.rocketbase.toggl.backend.model.ApplicationSettingModel.SchedulingConfig;
 import io.rocketbase.toggl.backend.model.ApplicationSettingModel.UserDetails;
 import io.rocketbase.toggl.backend.repository.ApplicationSettingRepository;
 import io.rocketbase.toggl.backend.util.ColorPalette;
@@ -142,6 +143,16 @@ public class TogglService implements TogglReportApiBuilder.WorkspaceProvider {
 
     public void updateHolidayCalendar(HolidayCalendar holidayCalendar) {
         applicationSettings.setHolidayCalendar(holidayCalendar);
+        applicationSettingRepository.save(applicationSettings);
+    }
+
+    public SchedulingConfig getSchedulingConfig() {
+        return applicationSettings.getSchedulingConfig();
+    }
+
+
+    public void updateSchedulingConfig(SchedulingConfig schedulingConfig) {
+        applicationSettings.setSchedulingConfig(schedulingConfig);
         applicationSettingRepository.save(applicationSettings);
     }
 }
