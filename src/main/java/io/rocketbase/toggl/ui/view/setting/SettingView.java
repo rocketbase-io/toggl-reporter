@@ -6,6 +6,7 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Component;
 import io.rocketbase.toggl.ui.component.tab.ExtendedTabSheet;
 import io.rocketbase.toggl.ui.view.AbstractView;
+import io.rocketbase.toggl.ui.view.setting.tab.LoginUserTab;
 import io.rocketbase.toggl.ui.view.setting.tab.PullDataTab;
 import io.rocketbase.toggl.ui.view.setting.tab.SchedulingTab;
 import io.rocketbase.toggl.ui.view.setting.tab.SettingTab;
@@ -23,8 +24,6 @@ public class SettingView extends AbstractView {
 
     public static final String VIEW_NAME = "setting";
 
-    @Resource
-    private PullDataTab pullDataTab;
 
     @Resource
     private SettingTab settingTab;
@@ -32,6 +31,11 @@ public class SettingView extends AbstractView {
     @Resource
     private SchedulingTab schedulingTab;
 
+    @Resource
+    private LoginUserTab loginUserTab;
+
+    @Resource
+    private PullDataTab pullDataTab;
 
     public SettingView() {
         super(VIEW_NAME, "Setting", FontAwesome.GEARS, 100);
@@ -40,9 +44,10 @@ public class SettingView extends AbstractView {
     @Override
     public Component initialzeUi() {
         ExtendedTabSheet tabSheet = new ExtendedTabSheet();
-        tabSheet.addTab("pull-data", pullDataTab);
         tabSheet.addTab("settings", settingTab);
         tabSheet.addTab("scheduling", schedulingTab);
+        tabSheet.addTab("login-user", loginUserTab);
+        tabSheet.addTab("pull-data", pullDataTab);
 
 
         return new MVerticalLayout()

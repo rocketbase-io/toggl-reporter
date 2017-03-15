@@ -62,19 +62,15 @@ public class Menu extends CssLayout {
         menuPart.addComponent(top);
 
         // logout menu item
-        /*
         MenuBar logoutMenu = new MenuBar();
         logoutMenu.addItem("Logout", FontAwesome.SIGN_OUT, (MenuBar.Command) selectedItem -> {
-            VaadinSession.getCurrent()
-                    .getSession()
-                    .invalidate();
-            Page.getCurrent()
-                    .reload();
+            UI.getCurrent()
+                    .getPage()
+                    .setLocation("logout");
         });
 
         logoutMenu.addStyleName("user-menu");
         menuPart.addComponent(logoutMenu);
-        */
 
         // button for toggling the visibility of the menu when on a small screen
         final Button showMenu = new Button("Menu", (ClickListener) event -> {

@@ -144,7 +144,6 @@ public class PullDataTab extends AbstractTab {
                 .withCenter();
     }
 
-
     private MGrid<DateTimeEntryGroupModel> initFetchedDataTable() {
         MGrid<DateTimeEntryGroupModel> grid = new MGrid<>(DateTimeEntryGroupModel.class)
                 .withGeneratedColumn("workspace",

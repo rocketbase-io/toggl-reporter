@@ -43,7 +43,7 @@ public class UserDetailForm extends AbstractForm<UserDetails> {
             .setBeans(Arrays.asList(ColorPalette.values()))
             .setCaptionGenerator(e -> e.name()
                     .toLowerCase()
-                    .replace("_", ""))
+                    .replace("_", " "))
             .addMValueChangeListener(e -> {
                 colorBox.setValue(String.format("<div class=\"color-box\" style=\"background-color: #%s\"></div>",
                         e.getValue()

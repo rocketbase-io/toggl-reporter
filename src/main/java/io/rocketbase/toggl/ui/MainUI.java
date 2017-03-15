@@ -23,7 +23,7 @@ import javax.annotation.Resource;
 /**
  * Created by marten on 20.02.17.
  */
-@SpringUI
+@SpringUI(path = "/app")
 @Theme("valo")
 @StyleSheet("design.css")
 public class MainUI extends UI {
