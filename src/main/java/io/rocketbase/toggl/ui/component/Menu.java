@@ -10,6 +10,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.themes.ValoTheme;
 import io.rocketbase.toggl.backend.security.MongoUserDetails;
+import io.rocketbase.toggl.backend.security.MongoUserService;
 import io.rocketbase.toggl.backend.security.UserRole;
 import io.rocketbase.toggl.ui.view.AbstractView;
 import lombok.Getter;
@@ -18,6 +19,10 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.vaadin.viritin.button.PrimaryButton;
+import org.vaadin.viritin.fields.MPasswordField;
+import org.vaadin.viritin.layouts.MVerticalLayout;
+import org.vaadin.viritin.layouts.MWindow;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -43,6 +48,9 @@ public class Menu extends CssLayout {
     @Resource
     private ApplicationContext applicationContext;
 
+    @Resource
+    private MongoUserService mongoUserService;
+
     @PostConstruct
     public void postConstruct() {
         setPrimaryStyleName(ValoTheme.MENU_ROOT);
@@ -66,15 +74,7 @@ public class Menu extends CssLayout {
         menuPart.addComponent(top);
 
         // logout menu item
-        MenuBar logoutMenu = new MenuBar();
-        logoutMenu.addItem("Logout", FontAwesome.SIGN_OUT, (MenuBar.Command) selectedItem -> {
-            UI.getCurrent()
-                    .getPage()
-                    .setLocation("logout");
-        });
-
-        logoutMenu.addStyleName("user-menu");
-        menuPart.addComponent(logoutMenu);
+        menuPart.addComponent(initLogoutMenu());
 
         // button for toggling the visibility of the menu when on a small screen
         final Button showMenu = new Button("Menu", (ClickListener) event -> {
@@ -102,6 +102,49 @@ public class Menu extends CssLayout {
         addComponent(menuPart);
     }
 
+    private Component initLogoutMenu() {
+        MenuBar logoutMenu = new MenuBar();
+        MenuBar.MenuItem logout = logoutMenu.addItem("", FontAwesome.SIGN_OUT, (MenuBar.Command) selectedItem -> {
+            UI.getCurrent()
+                    .getPage()
+                    .setLocation("logout");
+        });
+        logout.setDescription("logout");
+        MenuBar.MenuItem changePassword = logoutMenu.addItem("", FontAwesome.KEY, (MenuBar.Command) selectedItem -> {
+            MPasswordField password = new MPasswordField("password")
+                    .withRequired(true)
+                    .withFullWidth();
+
+            MWindow window = new MWindow("change password")
+                    .withModal(true)
+                    .withDraggable(false)
+                    .withResizable(false)
+                    .withCenter();
+            window.setContent(new MVerticalLayout().add(password)
+                    .add(new PrimaryButton("change", changeEvent -> {
+                        mongoUserService.updatePassword(getLoggedInUser(), password.getValue());
+                        Notification.show("successfully changed password");
+                        window.close();
+                    }))
+                    .withWidth("300px"));
+            UI.getCurrent()
+                    .addWindow(window);
+        });
+        changePassword.setDescription("change password");
+        logoutMenu.addStyleName("user-menu");
+        return logoutMenu;
+    }
+
+    private MongoUserDetails getLoggedInUser() {
+        Object principal = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+        if (principal instanceof MongoUserDetails) {
+            return (MongoUserDetails) principal;
+        }
+        return null;
+    }
+
     private void scanViews() {
         List<MenuEntry> menuEntries = new ArrayList<>();
         String[] viewBeanNames = applicationContext
@@ -113,15 +156,8 @@ public class Menu extends CssLayout {
                 menuEntries.add(new MenuEntry(view.getViewName(), view.getCaption(), view.getIcon(), view.getOrder(), view.getUserRole()));
             }
         }
-        Object principal = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
-
-        AtomicInteger roleOrdinal = new AtomicInteger(UserRole.ROLE_USER.ordinal());
-        if (principal instanceof MongoUserDetails) {
-            roleOrdinal.set(((MongoUserDetails) principal).getRole()
-                    .ordinal());
-        }
+        AtomicInteger roleOrdinal = new AtomicInteger(getLoggedInUser().getRole()
+                .ordinal());
         menuEntries.stream()
                 .sorted(Comparator.comparing(MenuEntry::getOrder))
                 .filter(m -> m.getRole()

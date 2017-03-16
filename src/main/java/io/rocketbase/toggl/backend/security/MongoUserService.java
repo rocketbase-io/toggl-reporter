@@ -66,7 +66,8 @@ public class MongoUserService {
     }
 
     public MongoUserDetails updatePassword(MongoUserDetails user, String newPassword) {
-        MongoUserDetails dbEntity = repository.findOne(user.getId());
+        MongoUserDetails dbEntity = repository.findByUsername(user.getUsername())
+                .get();
         dbEntity.setPassword(encoder.encode(newPassword));
         return repository.save(dbEntity);
     }
