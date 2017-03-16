@@ -80,7 +80,7 @@ public class LoginUserTab extends AbstractTab {
                             .withWidth("300px"));
                     UI.getCurrent()
                             .addWindow(window);
-                }).withStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED, ValoTheme.BUTTON_DANGER, ValoTheme.BUTTON_ICON_ONLY))
+                }).withStyleName(ValoTheme.BUTTON_BORDERLESS, ValoTheme.BUTTON_ICON_ONLY))
                 .withGeneratedColumn("edit", user -> new MButton(FontAwesome.PENCIL, e -> {
                     new MongoUserForm(user)
                             .initEditWindow((SavedHandler<MongoUserDetails>) entity -> {
@@ -95,7 +95,7 @@ public class LoginUserTab extends AbstractTab {
                             .addCloseListener(closeEvent -> {
                                 refreshTab();
                             });
-                }).withStyleName(ValoTheme.BUTTON_QUIET, ValoTheme.BUTTON_ICON_ONLY))
+                }).withStyleName(ValoTheme.BUTTON_BORDERLESS, ValoTheme.BUTTON_ICON_ONLY))
                 .withColumnHeaders("username", "role", "enabled", "password", "edit")
                 .withColumnWidth("password", 80)
                 .withColumnWidth("edit", 80)
