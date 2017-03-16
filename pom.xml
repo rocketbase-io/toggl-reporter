@@ -5,7 +5,7 @@
 
     <groupId>io.rocketbase.toggl</groupId>
     <artifactId>toggl-reporter</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>toggl-reporter</name>
@@ -22,6 +22,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+        <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+
         <vaadin.widgetset.mode>cdn</vaadin.widgetset.mode>
         <vaadin.version>7.7.7</vaadin.version>
         <jtoggl.version>jtoggl-api-8.0.0</jtoggl.version>
@@ -29,6 +31,7 @@
         <vaadin-chartjs.version>0.4.0</vaadin-chartjs.version>
         <viritin.version>1.61</viritin.version>
         <lombok.version>1.16.14</lombok.version>
+
 
         <docker.image.prefix>rocketbaseio</docker.image.prefix>
 
@@ -190,6 +193,23 @@
                         </resource>
                     </resources>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration> <!-- add this to disable checking -->
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
