@@ -65,10 +65,10 @@ public class UserTimeline {
         dateSeries.forEach(day -> {
             if (dateTimeEntriesMap.containsKey(day)) {
                 // duration is in milliseconds
-                result.add((double) Math.round((((double) dateTimeEntriesMap.get(day)
+                result.add(roundedHours(dateTimeEntriesMap.get(day)
                         .stream()
                         .mapToLong(e -> e.getDuration())
-                        .sum()) / 1000 / 60 / 60) * 10) / 10);
+                        .sum()));
             } else {
                 result.add(null);
             }
@@ -101,10 +101,10 @@ public class UserTimeline {
                 boolean fullWeek = result.size() == 0 ? firstWeekFullWeekWithinMonth : (!iterator.hasNext() ? lastWeekFullWeekWithinMonth : true);
                 Entry<Integer, List<TimeEntry>> entry = iterator.next();
 
-                double totalHours = Math.round((((double) entry.getValue()
+                double totalHours = roundedHours(entry.getValue()
                         .stream()
                         .mapToLong(v -> v.getDuration())
-                        .sum()) / 1000 / 60 / 60) * 10) / 10;
+                        .sum());
 
                 int workedDays = entry.getValue()
                         .stream()
@@ -113,11 +113,11 @@ public class UserTimeline {
                         .collect(Collectors.toSet())
                         .size();
 
-                double billableHours = Math.round((((double) entry.getValue()
+                double billableHours = roundedHours(entry.getValue()
                         .stream()
                         .filter(v -> v.getBillable() != null && v.getBillable())
                         .mapToLong(v -> v.getDuration())
-                        .sum()) / 1000 / 60 / 60) * 10) / 10;
+                        .sum());
 
                 long billableAmount = entry.getValue()
                         .stream()
@@ -133,6 +133,10 @@ public class UserTimeline {
         return cachedStatistics;
     }
 
+    private double roundedHours(long milliseconds) {
+        return Math.round(((double) milliseconds / 1000.0 / 60.0 / 60.0) * 10.0) / 10.0;
+    }
+
     @Getter
     @RequiredArgsConstructor
     public static class WeekStatistics {
@@ -144,7 +148,7 @@ public class UserTimeline {
         private final long billableAmount;
 
         public double getAverageHoursPerDay() {
-            return Math.round((totalHours / workedDays) * 10) / 10;
+            return Math.round((totalHours / (double) workedDays) * 10.0) / 10.0;
         }
 
     }
