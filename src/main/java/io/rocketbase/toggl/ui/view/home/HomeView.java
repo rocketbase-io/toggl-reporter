@@ -52,8 +52,8 @@ public class HomeView extends AbstractView {
     @Override
     public Component initialzeUi() {
         ExtendedTabSheet<YearMonth> tabSheet = new ExtendedTabSheet<>();
-        tabSheet.addTab("chart", chartTab);
-        tabSheet.addTab("statistics", statisticsTab);
+        tabSheet.addTab(FontAwesome.LINE_CHART, "chart", chartTab);
+        tabSheet.addTab(FontAwesome.STAR_O, "statistics", statisticsTab);
 
         typedSelect = new TypedSelect<>(YearMonth.class).asComboBoxType()
                 .setNullSelectionAllowed(false)

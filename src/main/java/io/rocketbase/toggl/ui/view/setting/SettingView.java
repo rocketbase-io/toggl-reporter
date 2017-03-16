@@ -46,10 +46,10 @@ public class SettingView extends AbstractView {
     @Override
     public Component initialzeUi() {
         ExtendedTabSheet tabSheet = new ExtendedTabSheet();
-        tabSheet.addTab("settings", settingTab);
-        tabSheet.addTab("scheduling", schedulingTab);
-        tabSheet.addTab("login-user", loginUserTab);
-        tabSheet.addTab("pull-data", pullDataTab);
+        tabSheet.addTab(FontAwesome.GEARS, "settings", settingTab);
+        tabSheet.addTab(FontAwesome.CALENDAR_TIMES_O, "scheduling", schedulingTab);
+        tabSheet.addTab(FontAwesome.USERS, "login-user", loginUserTab);
+        tabSheet.addTab(FontAwesome.DOWNLOAD, "pull-data", pullDataTab);
 
 
         return new MVerticalLayout()
