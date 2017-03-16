@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.rocketbase.toggl</groupId>
@@ -14,7 +15,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.5.2.RELEASE</version>
-        <relativePath /> <!-- lookup parent from repository -->
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <properties>
@@ -23,7 +24,7 @@
         <java.version>1.8</java.version>
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
-        <vaadin.widgetset.mode>cdn</vaadin.widgetset.mode>
+        <vaadin.widgetset.mode>local</vaadin.widgetset.mode>
         <vaadin.version>7.7.7</vaadin.version>
         <jtoggl.version>jtoggl-api-8.0.0</jtoggl.version>
         <toggl-report-api.version>toggl-report-api-1.0.1</toggl-report-api.version>
@@ -127,6 +128,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.vaadin.addons</groupId>
+            <artifactId>sizereporter</artifactId>
+            <version>0.1.4</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.konikvranik</groupId>
             <artifactId>jtoggl</artifactId>
             <version>${jtoggl.version}</version>
@@ -170,7 +177,7 @@
                 <executions>
                     <execution>
                         <goals>
-                            <!-- <goal>update-widgetset</goal> -->
+                            <goal>update-widgetset</goal>
                             <goal>compile</goal>
                         </goals>
                     </execution>
