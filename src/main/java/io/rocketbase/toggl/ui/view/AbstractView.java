@@ -5,8 +5,11 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontIcon;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
+import io.rocketbase.toggl.backend.security.UserRole;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 /**
  * Created by marten on 08.03.17.
@@ -19,9 +22,10 @@ public abstract class AbstractView extends CustomComponent implements View {
     private final String caption;
     private final FontIcon icon;
     private final int order;
-
     protected boolean initialized = false;
 
+    @Setter(AccessLevel.PROTECTED)
+    private UserRole userRole = UserRole.ROLE_USER;
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent) {

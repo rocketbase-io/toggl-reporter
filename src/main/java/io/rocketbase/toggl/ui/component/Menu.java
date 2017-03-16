@@ -9,16 +9,20 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.themes.ValoTheme;
+import io.rocketbase.toggl.backend.security.MongoUserDetails;
+import io.rocketbase.toggl.backend.security.UserRole;
 import io.rocketbase.toggl.ui.view.AbstractView;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @UIScope
 @SpringComponent
@@ -106,11 +110,22 @@ public class Menu extends CssLayout {
             final Class<?> type = applicationContext.getType(beanName);
             if (AbstractView.class.isAssignableFrom(type)) {
                 AbstractView view = (AbstractView) applicationContext.getBean(type);
-                menuEntries.add(new MenuEntry(view.getViewName(), view.getCaption(), view.getIcon(), view.getOrder()));
+                menuEntries.add(new MenuEntry(view.getViewName(), view.getCaption(), view.getIcon(), view.getOrder(), view.getUserRole()));
             }
+        }
+        Object principal = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        AtomicInteger roleOrdinal = new AtomicInteger(UserRole.ROLE_USER.ordinal());
+        if (principal instanceof MongoUserDetails) {
+            roleOrdinal.set(((MongoUserDetails) principal).getRole()
+                    .ordinal());
         }
         menuEntries.stream()
                 .sorted(Comparator.comparing(MenuEntry::getOrder))
+                .filter(m -> m.getRole()
+                        .ordinal() <= roleOrdinal.get())
                 .forEach(m -> initMenuEntry(m));
     }
 
@@ -151,6 +166,7 @@ public class Menu extends CssLayout {
         private final String name, caption;
         private final FontIcon icon;
         private final int order;
+        private final UserRole role;
         @Setter
         private Button button;
     }

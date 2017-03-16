@@ -8,6 +8,7 @@ import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
+import io.rocketbase.toggl.ui.view.error.ErrorView;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.Resource;
@@ -40,6 +41,7 @@ public class MainScreen extends HorizontalLayout {
 
         Navigator navigator = new Navigator(ui, viewContainer);
         navigator.addProvider(viewProvider);
+        navigator.setErrorView(ErrorView.class);
         navigator.addViewChangeListener(new ViewChangeListener() {
 
             @Override

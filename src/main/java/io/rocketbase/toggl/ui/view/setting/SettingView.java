@@ -4,6 +4,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Component;
+import io.rocketbase.toggl.backend.security.UserRole;
 import io.rocketbase.toggl.ui.component.tab.ExtendedTabSheet;
 import io.rocketbase.toggl.ui.view.AbstractView;
 import io.rocketbase.toggl.ui.view.setting.tab.LoginUserTab;
@@ -39,6 +40,7 @@ public class SettingView extends AbstractView {
 
     public SettingView() {
         super(VIEW_NAME, "Setting", FontAwesome.GEARS, 100);
+        setUserRole(UserRole.ROLE_ADMIN);
     }
 
     @Override
