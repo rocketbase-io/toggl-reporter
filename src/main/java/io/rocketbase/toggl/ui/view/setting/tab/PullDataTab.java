@@ -12,6 +12,8 @@ import io.rocketbase.toggl.backend.service.FetchAndStoreService;
 import io.rocketbase.toggl.backend.service.TimeEntryService;
 import io.rocketbase.toggl.ui.component.tab.AbstractTab;
 import org.joda.time.Period;
+import org.vaadin.viritin.LazyList.CountProvider;
+import org.vaadin.viritin.LazyList.PagingProvider;
 import org.vaadin.viritin.MSize;
 import org.vaadin.viritin.button.MButton;
 import org.vaadin.viritin.fields.MDateField;
@@ -33,6 +35,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @SpringComponent
 public class PullDataTab extends AbstractTab {
 
+    private static final int PER_PAGE = 45;
 
     @Resource
     private TogglService togglService;
@@ -56,7 +59,8 @@ public class PullDataTab extends AbstractTab {
 
     @Override
     public void onTabEnter() {
-        dateTimeGrid.setRows(timeEntryService.findAllWorkspaceIndipendant());
+        dateTimeGrid.lazyLoadFrom((PagingProvider<DateTimeEntryGroupModel>) firstRow -> timeEntryService.findPaged(firstRow / PER_PAGE, PER_PAGE),
+                (CountProvider) () -> timeEntryService.countAll(), PER_PAGE);
     }
 
     private TypedSelect<Workspace> initWorkspaceSelect() {
@@ -165,7 +169,9 @@ public class PullDataTab extends AbstractTab {
                 .withProperties("workspace", "date", "fetched", "userCount", "totalTime")
                 .withColumnHeaders("workspace", "date", "fetched", "count of users", "total time")
                 .withSize(MSize.FULL_SIZE);
-
+        grid.setColumnReorderingAllowed(false);
+        grid.getColumns()
+                .forEach(c -> c.setSortable(false));
         return grid;
     }
 }

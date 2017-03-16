@@ -6,6 +6,8 @@ import io.rocketbase.toggl.backend.model.report.UserTimeline;
 import io.rocketbase.toggl.backend.repository.DateTimeEntryGroupRepository;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonth;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -30,8 +32,13 @@ public class TimeEntryService {
     @Resource
     private MongoTemplate mongoTemplate;
 
-    public List<DateTimeEntryGroupModel> findAllWorkspaceIndipendant() {
-        return dateTimeEntryGroupRepository.findAll();
+    public int countAll() {
+        return (int) dateTimeEntryGroupRepository.count();
+    }
+
+    public List<DateTimeEntryGroupModel> findPaged(int page, int perPage) {
+        return dateTimeEntryGroupRepository.findAll(new PageRequest(page, perPage, Direction.ASC, "date"))
+                .getContent();
     }
 
     public List<DateTimeEntryGroupModel> getCurrentMonth() {
