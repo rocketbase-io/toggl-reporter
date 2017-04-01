@@ -20,6 +20,7 @@ import org.joda.time.YearMonth;
 import org.vaadin.viritin.MSize;
 import org.vaadin.viritin.fields.MTable;
 import org.vaadin.viritin.fields.MTextArea;
+import org.vaadin.viritin.fields.TypedSelect;
 import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
 
 @UIScope
 @SpringComponent
-public class StatisticsTab extends AbstractTab<YearMonth> {
+public class MonthStatisticsTab extends AbstractTab<YearMonth> {
 
     @Resource
     private TimeEntryService timeEntryService;
@@ -44,23 +45,43 @@ public class StatisticsTab extends AbstractTab<YearMonth> {
     private HoldydayManagerService holdydayManagerService;
 
     private MVerticalLayout layout;
+    private TypedSelect<YearMonth> typedSelect;
+
 
     @Override
     public Component initLayout() {
         layout = new MVerticalLayout()
                 .withSize(MSize.FULL_SIZE)
+                .withMargin(false)
                 .add(HomeView.getPlaceHolder(), 1);
 
-        return layout;
+        typedSelect = new TypedSelect<>(YearMonth.class).asComboBoxType()
+                .setNullSelectionAllowed(false)
+                .addMValueChangeListener(e -> {
+                    filter();
+                })
+                .withWidth("200px");
+
+        return new MVerticalLayout()
+                .add(new MHorizontalLayout()
+                        .add(typedSelect, Alignment.MIDDLE_RIGHT)
+                        .withFullWidth())
+                .add(layout, 1)
+                .withSize(MSize.FULL_SIZE);
     }
 
     @Override
     public void onTabEnter() {
         layout.removeAllComponents();
-        YearMonth filter = getTabSheet().getFilter();
-        if (filter != null) {
-            layout.add(genTable(filter), 1);
-            layout.add(genHolidays(filter));
+        typedSelect.setBeans(timeEntryService.fetchAllMonth());
+        filter();
+    }
+
+    private void filter() {
+        layout.removeAllComponents();
+        if (typedSelect.getValue() != null) {
+            layout.add(genTable(typedSelect.getValue()), 1);
+            layout.add(genHolidays(typedSelect.getValue()));
         } else {
             layout.add(HomeView.getPlaceHolder(), 1);
         }

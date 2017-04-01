@@ -23,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.YearMonth;
 import org.vaadin.viritin.MSize;
+import org.vaadin.viritin.fields.TypedSelect;
+import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MPanel;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
@@ -40,24 +42,39 @@ public class ChartTab extends AbstractTab<YearMonth> {
     private TimeEntryService timeEntryService;
 
     private MPanel panel;
+    private TypedSelect<YearMonth> typedSelect;
 
     @Override
     public Component initLayout() {
         panel = new MPanel(HomeView.getPlaceHolder())
                 .withSize(MSize.FULL_SIZE);
 
+        typedSelect = new TypedSelect<>(YearMonth.class).asComboBoxType()
+                .setNullSelectionAllowed(false)
+                .addMValueChangeListener(e -> {
+                    filter();
+                })
+                .withWidth("200px");
+
         return new MVerticalLayout()
+                .add(new MHorizontalLayout()
+                        .add(typedSelect, Alignment.MIDDLE_RIGHT)
+                        .withFullWidth())
                 .add(panel, 1)
                 .withSize(MSize.FULL_SIZE);
     }
 
     @Override
     public void onTabEnter() {
-        YearMonth filter = getTabSheet().getFilter();
-        if (filter != null) {
+        typedSelect.setBeans(timeEntryService.fetchAllMonth());
+        filter();
+    }
+
+    private void filter() {
+        if (typedSelect.getValue() != null) {
 
             MVerticalLayout layout = new MVerticalLayout()
-                    .add(genChart(filter), 1)
+                    .add(genChart(typedSelect.getValue()), 1)
                     .withMargin(false)
                     .withStyleName("chart-container");
 

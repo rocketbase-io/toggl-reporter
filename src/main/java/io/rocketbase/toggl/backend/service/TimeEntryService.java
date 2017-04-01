@@ -37,7 +37,7 @@ public class TimeEntryService {
     }
 
     public List<DateTimeEntryGroupModel> findPaged(int page, int perPage) {
-        return dateTimeEntryGroupRepository.findAll(new PageRequest(page, perPage, Direction.ASC, "date"))
+        return dateTimeEntryGroupRepository.findAll(new PageRequest(page, perPage, Direction.DESC, "date"))
                 .getContent();
     }
 
