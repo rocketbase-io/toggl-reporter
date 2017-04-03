@@ -5,6 +5,8 @@ import io.rocketbase.toggl.backend.model.DateTimeEntryGroupModel;
 import io.rocketbase.toggl.backend.model.report.UserTimeline;
 import io.rocketbase.toggl.backend.model.report.WeekTimeline;
 import io.rocketbase.toggl.backend.repository.DateTimeEntryGroupRepository;
+import io.rocketbase.toggl.backend.util.LocalDateConverter;
+import io.rocketbase.toggl.backend.util.YearWeekUtil;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonth;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +19,6 @@ import org.threeten.extra.YearWeek;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
-import java.time.DayOfWeek;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -116,14 +117,16 @@ public class TimeEntryService {
                 .collect(Collectors.toList());
     }
 
+
     public List<WeekTimeline> getWeekTimelines(@NotNull YearWeek from, YearWeek to) {
         List<DateTimeEntryGroupModel> queryResult = dateTimeEntryGroupRepository.findByWorkspaceIdAndDateBetween(togglService.getWorkspaceId(),
-                HolidayManagerService.convert(from.atDay(DayOfWeek.MONDAY))
+                YearWeekUtil.getFirstDay(from)
                         .minusDays(1)
                         .toDate(),
-                to != null ? HolidayManagerService.convert(to.atDay(DayOfWeek.SUNDAY))
+                to != null ? YearWeekUtil.getLastDay(to)
                         .plusDays(1)
                         .toDate() : LocalDate.now()
+                        .plusDays(1)
                         .toDate());
 
         Map<YearWeek, Map<Long, UserTimeline>> result = new HashMap<>();
@@ -150,10 +153,8 @@ public class TimeEntryService {
                     r.getUidTimelines()
                             .putAll(e.getValue());
                     r.getHolidays()
-                            .addAll(holidayManagerService.getHolidays(e.getKey()
-                                            .atDay(DayOfWeek.MONDAY),
-                                    e.getKey()
-                                            .atDay(DayOfWeek.SUNDAY)));
+                            .addAll(holidayManagerService.getHolidays(LocalDateConverter.convert(YearWeekUtil.getFirstDay(e.getKey())),
+                                    LocalDateConverter.convert(YearWeekUtil.getLastDay(e.getKey()))));
                     return r;
                 })
                 .sorted(Comparator.comparing(WeekTimeline::getYearWeek)

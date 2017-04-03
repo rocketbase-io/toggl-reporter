@@ -3,6 +3,7 @@ package io.rocketbase.toggl.backend.model.report;
 import io.rocketbase.toggl.api.model.TimeEntry;
 import io.rocketbase.toggl.backend.model.ApplicationSettingModel.UserDetails;
 import io.rocketbase.toggl.backend.util.YearMonthUtil;
+import io.rocketbase.toggl.backend.util.YearWeekUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.LocalDate;
@@ -135,7 +136,7 @@ public class UserTimeline {
 
     public WeekStatistics getWeekStatisticsOfWeek(YearWeek yearWeek) {
         if (cachedWeekStatistics == null) {
-            List<LocalDate> dateSeries = YearMonthUtil.getAllDatesOfYearWeek(yearWeek);
+            List<LocalDate> dateSeries = YearWeekUtil.getAllDatesOfYearWeek(yearWeek);
             List<TimeEntry> timeEntries = new ArrayList<>();
             dateSeries.forEach(day -> {
                 if (dateTimeEntriesMap.containsKey(day)) {

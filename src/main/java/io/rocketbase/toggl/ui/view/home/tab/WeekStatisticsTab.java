@@ -52,12 +52,27 @@ public class WeekStatisticsTab extends AbstractTab<YearMonth> {
         weekFrom = new TypedSelect<>(YearWeek.class).asComboBoxType()
                 .setNullSelectionAllowed(false)
                 .addMValueChangeListener(e -> {
+                    if (e.getValue() != null && weekTo.getValue() != null) {
+                        if (weekTo.getValue()
+                                .isBefore(e.getValue())) {
+                            weekTo.setValue(null);
+                        }
+                    }
                     filter();
                 })
                 .withWidth("200px");
         weekTo = new TypedSelect<>(YearWeek.class).asComboBoxType()
                 .setNullSelectionAllowed(false)
                 .addMValueChangeListener(e -> {
+                    if (e.getValue() != null) {
+                        if (weekFrom.getValue() != null && e.getValue()
+                                .isAfter(weekFrom.getValue())) {
+                            filter();
+                            return;
+                        } else {
+                            weekTo.setValue(null);
+                        }
+                    }
                     filter();
                 })
                 .withWidth("200px");
@@ -104,8 +119,11 @@ public class WeekStatisticsTab extends AbstractTab<YearMonth> {
                         .add(genLabelInfo("Billable hours", e.getBillableHours()))
                         .add(genLabelInfo("Earned", e.getBillableAmount()))
                         .add(genLabelInfo("Holidays",
-                                Joiner.on(", ")
-                                        .join(e.getHolidays())))
+                                e.getHolidays()
+                                        .size() > 0 ? "<button title=\"" + Joiner.on(", ")
+                                        .join(e.getHolidays()) + "\">" + e.getHolidays()
+                                        .size() + "</button>" : "-")
+                                .withStyleName("left-right"))
                         .withStyleName("cell-content-wrapper"))
                 .withColumnWidth("week", 240)
                 .withSize(MSize.FULL_SIZE);

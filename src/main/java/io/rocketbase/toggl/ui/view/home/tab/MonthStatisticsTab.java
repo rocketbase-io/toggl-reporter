@@ -13,6 +13,7 @@ import de.jollyday.Holiday;
 import io.rocketbase.toggl.backend.model.report.UserTimeline;
 import io.rocketbase.toggl.backend.service.HolidayManagerService;
 import io.rocketbase.toggl.backend.service.TimeEntryService;
+import io.rocketbase.toggl.backend.util.LocalDateConverter;
 import io.rocketbase.toggl.backend.util.YearMonthUtil;
 import io.rocketbase.toggl.ui.component.tab.AbstractTab;
 import io.rocketbase.toggl.ui.view.home.HomeView;
@@ -97,7 +98,7 @@ public class MonthStatisticsTab extends AbstractTab<YearMonth> {
                                 .map(h -> String.format("%s (Week: %d): %s",
                                         h.getDate()
                                                 .format(DateTimeFormatter.ISO_DATE),
-                                        HolidayManagerService.convert(h.getDate())
+                                        LocalDateConverter.convert(h.getDate())
                                                 .getWeekOfWeekyear(),
                                         h.getDescription(UI.getCurrent()
                                                 .getLocale())))

@@ -29,6 +29,12 @@
     opacity: 0.8;
 }
 
+.v-label.info button {
+    float: right;
+    font-weight: 400;
+    line-height: 1;
+}
+
 .v-label.info.left-right span {
     position: absolute;
     left: 0;
