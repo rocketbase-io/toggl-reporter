@@ -45,4 +45,13 @@ public class HolidayManagerService {
         return result;
     }
 
+    public Set<Holiday> getHolidays(LocalDate from, LocalDate to) {
+        HolidayCalendar holidayCalendar = togglService.getHolidayCalender();
+        Set<Holiday> result = new TreeSet<>();
+        if (holidayCalendar != null) {
+            HolidayManager m = HolidayManager.getInstance(ManagerParameters.create(holidayCalendar, null));
+            result.addAll(m.getHolidays(from, to));
+        }
+        return result;
+    }
 }
