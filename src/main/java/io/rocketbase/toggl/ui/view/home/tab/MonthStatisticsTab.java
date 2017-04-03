@@ -11,7 +11,7 @@ import com.vaadin.ui.Image;
 import com.vaadin.ui.UI;
 import de.jollyday.Holiday;
 import io.rocketbase.toggl.backend.model.report.UserTimeline;
-import io.rocketbase.toggl.backend.service.HoldydayManagerService;
+import io.rocketbase.toggl.backend.service.HolidayManagerService;
 import io.rocketbase.toggl.backend.service.TimeEntryService;
 import io.rocketbase.toggl.backend.util.YearMonthUtil;
 import io.rocketbase.toggl.ui.component.tab.AbstractTab;
@@ -42,7 +42,7 @@ public class MonthStatisticsTab extends AbstractTab<YearMonth> {
     private TimeEntryService timeEntryService;
 
     @Resource
-    private HoldydayManagerService holdydayManagerService;
+    private HolidayManagerService holidayManagerService;
 
     private MVerticalLayout layout;
     private TypedSelect<YearMonth> typedSelect;
@@ -73,7 +73,7 @@ public class MonthStatisticsTab extends AbstractTab<YearMonth> {
     @Override
     public void onTabEnter() {
         layout.removeAllComponents();
-        typedSelect.setBeans(timeEntryService.fetchAllMonth());
+        typedSelect.setBeans(timeEntryService.fetchAllYearMonths());
         filter();
     }
 
@@ -88,7 +88,7 @@ public class MonthStatisticsTab extends AbstractTab<YearMonth> {
     }
 
     private Component genHolidays(YearMonth filter) {
-        Set<Holiday> holidaySet = holdydayManagerService.getHolidays(filter);
+        Set<Holiday> holidaySet = holidayManagerService.getHolidays(filter);
 
         MTextArea textArea = new MTextArea("Holidays")
                 .withValue(Joiner.on(",\t")
@@ -97,7 +97,7 @@ public class MonthStatisticsTab extends AbstractTab<YearMonth> {
                                 .map(h -> String.format("%s (Week: %d): %s",
                                         h.getDate()
                                                 .format(DateTimeFormatter.ISO_DATE),
-                                        HoldydayManagerService.convert(h.getDate())
+                                        HolidayManagerService.convert(h.getDate())
                                                 .getWeekOfWeekyear(),
                                         h.getDescription(UI.getCurrent()
                                                 .getLocale())))
@@ -137,9 +137,9 @@ public class MonthStatisticsTab extends AbstractTab<YearMonth> {
         List<Integer> weekList = YearMonthUtil.getAllWeeksOfWeekyear(yearMonth);
         weekList.forEach(week -> {
             table.withGeneratedColumn(String.valueOf(week), e -> {
-                if (e.getAvgHoursPerWeek()
+                if (e.getWeekStatisticsOfMonth()
                         .containsKey(week)) {
-                    UserTimeline.WeekStatistics stat = e.getAvgHoursPerWeek()
+                    UserTimeline.WeekStatistics stat = e.getWeekStatisticsOfMonth()
                             .get(week);
                     return new MVerticalLayout()
                             .withFullWidth()

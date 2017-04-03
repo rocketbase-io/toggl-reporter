@@ -3,6 +3,7 @@ package io.rocketbase.toggl.backend.service;
 import io.rocketbase.toggl.backend.config.TogglService;
 import io.rocketbase.toggl.backend.model.DateTimeEntryGroupModel;
 import io.rocketbase.toggl.backend.model.report.UserTimeline;
+import io.rocketbase.toggl.backend.model.report.WeekTimeline;
 import io.rocketbase.toggl.backend.repository.DateTimeEntryGroupRepository;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonth;
@@ -12,8 +13,11 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import org.threeten.extra.YearWeek;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+import java.time.DayOfWeek;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,6 +35,9 @@ public class TimeEntryService {
 
     @Resource
     private MongoTemplate mongoTemplate;
+
+    @Resource
+    private HolidayManagerService holidayManagerService;
 
     public int countAll() {
         return (int) dateTimeEntryGroupRepository.count();
@@ -53,7 +60,7 @@ public class TimeEntryService {
                         .toDate());
     }
 
-    public List<YearMonth> fetchAllMonth() {
+    public List<YearMonth> fetchAllYearMonths() {
         Query query = Query.query(Criteria.where("workspaceId")
                 .is(togglService.getWorkspaceId()));
         query.fields()
@@ -88,5 +95,69 @@ public class TimeEntryService {
                     });
         });
         return new ArrayList<>(result.values());
+    }
+
+    public List<YearWeek> fetchAllYearWeeks() {
+        Query query = Query.query(Criteria.where("workspaceId")
+                .is(togglService.getWorkspaceId()));
+        query.fields()
+                .include("date");
+
+        List<DateTimeEntryGroupModel> queryResult = mongoTemplate.find(query, DateTimeEntryGroupModel.class, DateTimeEntryGroupModel.COLLECTION_NAME);
+
+        Set<YearWeek> result = new TreeSet<>();
+        queryResult.forEach(e -> result.add(YearWeek.of(e.getDate()
+                        .getYear(),
+                e.getDate()
+                        .getWeekOfWeekyear())));
+
+        return result.stream()
+                .sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList());
+    }
+
+    public List<WeekTimeline> getWeekTimelines(@NotNull YearWeek from, YearWeek to) {
+        List<DateTimeEntryGroupModel> queryResult = dateTimeEntryGroupRepository.findByWorkspaceIdAndDateBetween(togglService.getWorkspaceId(),
+                HolidayManagerService.convert(from.atDay(DayOfWeek.MONDAY))
+                        .minusDays(1)
+                        .toDate(),
+                to != null ? HolidayManagerService.convert(to.atDay(DayOfWeek.SUNDAY))
+                        .plusDays(1)
+                        .toDate() : LocalDate.now()
+                        .toDate());
+
+        Map<YearWeek, Map<Long, UserTimeline>> result = new HashMap<>();
+        queryResult.forEach(e -> {
+            YearMonth yearMonth = YearMonth.fromDateFields(e.getDate()
+                    .toDate());
+            e.getUserTimeEntriesMap()
+                    .forEach((userId, timeEntries) -> {
+                        YearWeek yearWeek = YearWeek.of(e.getDate()
+                                        .getYear(),
+                                e.getDate()
+                                        .getWeekOfWeekyear());
+                        result.putIfAbsent(yearWeek, new HashMap<>());
+                        Map<Long, UserTimeline> yearWeekMap = result.get(yearWeek);
+                        yearWeekMap.putIfAbsent(userId, new UserTimeline(togglService.getUserById(userId), yearMonth));
+                        yearWeekMap.get(userId)
+                                .addTimeEntries(e.getDate(), timeEntries);
+                    });
+        });
+        return result.entrySet()
+                .stream()
+                .map(e -> {
+                    WeekTimeline r = new WeekTimeline(e.getKey());
+                    r.getUidTimelines()
+                            .putAll(e.getValue());
+                    r.getHolidays()
+                            .addAll(holidayManagerService.getHolidays(e.getKey()
+                                            .atDay(DayOfWeek.MONDAY),
+                                    e.getKey()
+                                            .atDay(DayOfWeek.SUNDAY)));
+                    return r;
+                })
+                .sorted(Comparator.comparing(WeekTimeline::getYearWeek)
+                        .reversed())
+                .collect(Collectors.toList());
     }
 }

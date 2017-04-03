@@ -66,7 +66,7 @@ public class ChartTab extends AbstractTab<YearMonth> {
 
     @Override
     public void onTabEnter() {
-        typedSelect.setBeans(timeEntryService.fetchAllMonth());
+        typedSelect.setBeans(timeEntryService.fetchAllYearMonths());
         filter();
     }
 

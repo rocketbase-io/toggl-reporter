@@ -19,7 +19,7 @@ import java.util.TreeSet;
  * Created by marten on 10.03.17.
  */
 @Service
-public class HoldydayManagerService {
+public class HolidayManagerService {
 
     @Resource
     private TogglService togglService;

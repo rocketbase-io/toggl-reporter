@@ -38,6 +38,27 @@
     padding: 5px 2px;
 }
 
+.v-table-footer-container .footer-key-value {
+    font-weight: bold;
+    text-align: right;
+    display: block;
+    position: relative;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.v-table-footer-container .footer-key-value:last-child {
+    margin-bottom: 0;
+}
+
+.v-table-footer-container .footer-key-value span {
+    font-weight: normal;
+    font-style: italic;
+    opacity: 0.8;
+    position: absolute;
+    left: 0;
+}
+
 .v-filterselect-item-color-palette span {
     padding-left: 23px;
 }

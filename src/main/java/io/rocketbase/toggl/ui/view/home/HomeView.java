@@ -6,11 +6,11 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
-import io.rocketbase.toggl.backend.service.TimeEntryService;
 import io.rocketbase.toggl.ui.component.tab.ExtendedTabSheet;
 import io.rocketbase.toggl.ui.view.AbstractView;
 import io.rocketbase.toggl.ui.view.home.tab.ChartTab;
 import io.rocketbase.toggl.ui.view.home.tab.MonthStatisticsTab;
+import io.rocketbase.toggl.ui.view.home.tab.WeekStatisticsTab;
 import org.vaadin.viritin.MSize;
 import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MVerticalLayout;
@@ -27,13 +27,13 @@ public class HomeView extends AbstractView {
     public static final String VIEW_NAME = "";
 
     @Resource
-    private TimeEntryService timeEntryService;
-
-    @Resource
     private ChartTab chartTab;
 
     @Resource
     private MonthStatisticsTab monthStatisticsTab;
+
+    @Resource
+    private WeekStatisticsTab weekStatisticsTab;
 
     public HomeView() {
         super(VIEW_NAME, "Chart", FontAwesome.LINE_CHART, 0);
@@ -50,6 +50,7 @@ public class HomeView extends AbstractView {
         ExtendedTabSheet tabSheet = new ExtendedTabSheet();
         tabSheet.addTab(FontAwesome.LINE_CHART, "chart", chartTab);
         tabSheet.addTab(FontAwesome.STAR_O, "month-statistics", monthStatisticsTab);
+        tabSheet.addTab(FontAwesome.CALENDAR, "week-statistics", weekStatisticsTab);
 
 
         return new MVerticalLayout()
