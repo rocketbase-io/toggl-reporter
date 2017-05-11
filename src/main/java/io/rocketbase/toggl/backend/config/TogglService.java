@@ -68,20 +68,29 @@ public class TogglService implements TogglReportApiBuilder.WorkspaceProvider {
             applicationSettings.getWorkspaceMap()
                     .putIfAbsent(workspace.getId(), workspace);
 
-            List<User> workspaceUsers = jToggl.getWorkspaceUsers(workspace.getId());
-            if (workspaceUsers != null) {
-                workspaceUsers.forEach(u -> {
-                    applicationSettings.getUserMap()
-                            .computeIfAbsent(u.getId(), (id) -> {
-                                UserDetails userDetails = new UserDetails(u.getId(), u.getFullname(), u.getEmail());
-                                userDetails.setGraphColor(ColorPalette.getRandomValue());
-                                userDetails.setAvatar(GRAVATAR.getUrl(u.getEmail()));
-                                return userDetails;
-                            });
-                });
-            }
-            applicationSettingRepository.save(applicationSettings);
+            updateCurrentWorkspaceUsers();
         }
+    }
+
+    public void updateCurrentWorkspaceUsers() {
+        List<User> workspaceUsers = jToggl.getWorkspaceUsers(getWorkspaceId());
+        if (workspaceUsers != null) {
+            workspaceUsers.forEach(u -> {
+                if (applicationSettings.getUserMap()
+                        .containsKey(u.getId())) {
+                    UserDetails userDetails = applicationSettings.getUserMap()
+                            .get(u.getId());
+                    userDetails.setAvatar(GRAVATAR.getUrl(u.getEmail()));
+                } else {
+                    UserDetails userDetails = new UserDetails(u.getId(), u.getFullname(), u.getEmail());
+                    userDetails.setGraphColor(ColorPalette.getRandomValue());
+                    userDetails.setAvatar(GRAVATAR.getUrl(u.getEmail()));
+                    applicationSettings.getUserMap()
+                            .put(u.getId(), userDetails);
+                }
+            });
+        }
+        applicationSettingRepository.save(applicationSettings);
     }
 
 

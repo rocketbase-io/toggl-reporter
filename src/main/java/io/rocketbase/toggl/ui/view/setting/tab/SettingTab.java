@@ -1,7 +1,9 @@
 package io.rocketbase.toggl.ui.view.setting.tab;
 
+import com.vaadin.server.FontAwesome;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import de.jollyday.HolidayCalendar;
 import io.rocketbase.toggl.backend.config.TogglService;
@@ -9,8 +11,10 @@ import io.rocketbase.toggl.backend.model.ApplicationSettingModel.UserDetails;
 import io.rocketbase.toggl.ui.component.tab.AbstractTab;
 import io.rocketbase.toggl.ui.view.setting.form.UserDetailForm;
 import org.vaadin.viritin.MSize;
+import org.vaadin.viritin.button.MButton;
 import org.vaadin.viritin.fields.TypedSelect;
 import org.vaadin.viritin.label.MLabel;
+import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
 import javax.annotation.Resource;
@@ -27,9 +31,11 @@ public class SettingTab extends AbstractTab {
     private TogglService togglService;
 
     private TypedSelect<HolidayCalendar> holidayCalendarTypedSelect;
+
     private TypedSelect<UserDetails> userTypedSelect;
 
     private UserDetailForm userDetailForm;
+
     private MLabel placeHolder = new MLabel("");
 
     @Override
@@ -44,9 +50,15 @@ public class SettingTab extends AbstractTab {
         holidayCalendarTypedSelect = initHolidayCalenderTypeSelect();
         userTypedSelect = initUserTypeSelect();
 
+        MButton refreshUsers = new MButton(FontAwesome.REFRESH, "Refresh Users", event -> {
+            togglService.updateCurrentWorkspaceUsers();
+            onTabEnter();
+        });
         return new MVerticalLayout()
                 .add(holidayCalendarTypedSelect)
-                .add(userTypedSelect)
+                .add(new MHorizontalLayout().add(userTypedSelect, 1)
+                        .add(refreshUsers, Alignment.BOTTOM_CENTER)
+                        .withFullWidth())
                 .add(userDetailForm, 1)
                 .add(placeHolder, 1)
                 .withSize(MSize.FULL_SIZE);
