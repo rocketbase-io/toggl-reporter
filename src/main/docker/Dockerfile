@@ -1,8 +1,7 @@
 FROM frolvlad/alpine-oraclejdk8:slim
+
+ADD *.jar /opt/application/app.jar
+WORKDIR /opt/application/
+
 EXPOSE 8080
-
-VOLUME /tmp
-ADD toggl-reporter-*.jar app.jar
-RUN sh -c 'touch /app.jar'
-
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/urandom", "-Xmx512m", "-Xss256k",  "-jar", "app.jar"]
