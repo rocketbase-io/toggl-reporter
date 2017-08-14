@@ -5,7 +5,7 @@
 
     <groupId>io.rocketbase.toggl</groupId>
     <artifactId>toggl-reporter</artifactId>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.0.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>toggl-reporter</name>
@@ -170,35 +170,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>0.4.13</version>
-                <configuration>
-                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
-                    <dockerDirectory>src/main/docker</dockerDirectory>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                    </resources>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>push-image</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>push</goal>
-                        </goals>
-                        <configuration>
-                            <imageName>rocketbaseio/toggl-reporter:${project.version}</imageName>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
 
             <plugin>
