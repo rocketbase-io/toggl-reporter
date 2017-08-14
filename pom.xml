@@ -187,6 +187,18 @@
                         </resource>
                     </resources>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>push-image</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                        <configuration>
+                            <imageName>rocketbaseio/toggl-reporter:${project.version}</imageName>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
