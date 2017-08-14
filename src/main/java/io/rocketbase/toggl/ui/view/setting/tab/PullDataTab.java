@@ -1,6 +1,7 @@
 package io.rocketbase.toggl.ui.view.setting.tab;
 
 import ch.simas.jtoggl.domain.Workspace;
+import com.vaadin.data.ValueProvider;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
@@ -12,17 +13,17 @@ import io.rocketbase.toggl.backend.service.FetchAndStoreService;
 import io.rocketbase.toggl.backend.service.TimeEntryService;
 import io.rocketbase.toggl.ui.component.tab.AbstractTab;
 import org.joda.time.Period;
-import org.vaadin.viritin.LazyList.CountProvider;
-import org.vaadin.viritin.LazyList.PagingProvider;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.vaadin.viritin.MSize;
 import org.vaadin.viritin.button.MButton;
-import org.vaadin.viritin.fields.MDateField;
-import org.vaadin.viritin.fields.TypedSelect;
 import org.vaadin.viritin.grid.MGrid;
-import org.vaadin.viritin.grid.StringPropertyValueGenerator;
+import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 import org.vaadin.viritin.layouts.MWindow;
+import org.vaadin.viritin.v7.fields.MDateField;
+import org.vaadin.viritin.v7.fields.TypedSelect;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -37,6 +38,8 @@ public class PullDataTab extends AbstractTab {
 
     private static final int PER_PAGE = 45;
 
+    private static DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+
     @Resource
     private TogglService togglService;
 
@@ -45,6 +48,7 @@ public class PullDataTab extends AbstractTab {
 
     @Resource
     private TimeEntryService timeEntryService;
+
     private MGrid<DateTimeEntryGroupModel> dateTimeGrid;
 
     @Override
@@ -59,8 +63,10 @@ public class PullDataTab extends AbstractTab {
 
     @Override
     public void onTabEnter() {
-        dateTimeGrid.lazyLoadFrom((PagingProvider<DateTimeEntryGroupModel>) firstRow -> timeEntryService.findPaged(firstRow / PER_PAGE, PER_PAGE),
-                (CountProvider) () -> timeEntryService.countAll(), PER_PAGE);
+        dateTimeGrid.setDataProvider((sortOrders, offset, limit) ->
+                        timeEntryService.findPaged(offset / PER_PAGE, PER_PAGE)
+                                .stream(),
+                () -> timeEntryService.countAll());
     }
 
     private TypedSelect<Workspace> initWorkspaceSelect() {
@@ -97,22 +103,22 @@ public class PullDataTab extends AbstractTab {
 
         MButton fetch = new MButton(FontAwesome.DOWNLOAD, "fetch", e -> {
             if (from.getValue() != null && to.getValue() != null) {
-                UI.getCurrent()
-                        .setPollInterval(100);
+                final UI ui = UI.getCurrent();
+                ui.setPollInterval(100);
 
                 MWindow waitWindow = initWaitWindow();
-                UI.getCurrent()
-                        .addWindow(waitWindow);
-                new Thread(() -> {
+                ui.addWindow(waitWindow);
 
+                new Thread(() -> {
+                    UI.setCurrent(ui);
                     fetchAndStoreService.fetchBetween(from.getValue(), to.getValue());
-                    UI.getCurrent()
-                            .access(() -> {
-                                waitWindow.close();
-                                refreshTab();
-                                UI.getCurrent()
-                                        .setPollInterval(-1);
-                            });
+
+                    ui.access(() -> {
+                        waitWindow.close();
+                        refreshTab();
+                        UI.getCurrent()
+                                .setPollInterval(-1);
+                    });
                 }).start();
             } else {
                 Notification.show("Please select from and to");
@@ -150,25 +156,32 @@ public class PullDataTab extends AbstractTab {
 
     private MGrid<DateTimeEntryGroupModel> initFetchedDataTable() {
         MGrid<DateTimeEntryGroupModel> grid = new MGrid<>(DateTimeEntryGroupModel.class)
-                .withGeneratedColumn("workspace",
-                        (StringPropertyValueGenerator.ValueGenerator<DateTimeEntryGroupModel>) bean -> togglService.getWorkspaceById(bean.getWorkspaceId())
-                                .getName())
-                .withGeneratedColumn("userCount",
-                        (StringPropertyValueGenerator.ValueGenerator<DateTimeEntryGroupModel>) bean -> String.valueOf(bean.getUserTimeEntriesMap()
-                                .size()))
-                .withGeneratedColumn("totalTime", (StringPropertyValueGenerator.ValueGenerator<DateTimeEntryGroupModel>) bean -> {
-                    AtomicLong totalMilliseconds = new AtomicLong(0);
-                    bean.getUserTimeEntriesMap()
-                            .forEach((user, timeEntries) -> {
-                                totalMilliseconds.addAndGet(timeEntries.stream()
-                                        .mapToLong(e -> e.getDuration())
-                                        .sum());
-                            });
-                    return UserTimeline.PERIOD_FORMATTER.print(new Period(totalMilliseconds.get()));
-                })
-                .withProperties("workspace", "date", "fetched", "userCount", "totalTime")
-                .withColumnHeaders("workspace", "date", "fetched", "count of users", "total time")
+                .withProperties()
                 .withSize(MSize.FULL_SIZE);
+        grid.addComponentColumn((ValueProvider<DateTimeEntryGroupModel, Component>) bean -> new MLabel(togglService.getWorkspaceById(bean.getWorkspaceId())
+                .getName()))
+                .setCaption("workspace");
+        grid.addColumn("date")
+                .setCaption("date");
+        grid.addComponentColumn((ValueProvider<DateTimeEntryGroupModel, Component>) bean ->
+                new MLabel(bean.getFetched() != null ? bean.getFetched()
+                        .toString(DATE_TIME_FORMAT) : "-"))
+                .setCaption("fetched");
+        grid.addComponentColumn((ValueProvider<DateTimeEntryGroupModel, Component>) bean -> new MLabel(String.valueOf(bean.getUserTimeEntriesMap()
+                .size())))
+                .setCaption("count of users");
+        grid.addComponentColumn((ValueProvider<DateTimeEntryGroupModel, Component>) bean -> {
+            AtomicLong totalMilliseconds = new AtomicLong(0);
+            bean.getUserTimeEntriesMap()
+                    .forEach((user, timeEntries) -> {
+                        totalMilliseconds.addAndGet(timeEntries.stream()
+                                .mapToLong(e -> e.getDuration())
+                                .sum());
+                    });
+            return new MLabel(UserTimeline.PERIOD_FORMATTER.print(new Period(totalMilliseconds.get())));
+        })
+                .setCaption("total time");
+
         grid.setColumnReorderingAllowed(false);
         grid.getColumns()
                 .forEach(c -> c.setSortable(false));

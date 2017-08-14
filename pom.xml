@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.4.RELEASE</version>
+        <version>1.5.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -24,12 +24,16 @@
         <java.version>1.8</java.version>
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
-        <vaadin.widgetset.mode>local</vaadin.widgetset.mode>
-        <vaadin.version>7.7.10</vaadin.version>
+        <vaadin.version>8.1.1</vaadin.version>
+        <vaadin-spring-boot.version>2.0.1</vaadin-spring-boot.version>
+        <viritin.version>2.0.beta2</viritin.version>
+
         <jtoggl.version>jtoggl-api-8.0.0</jtoggl.version>
         <toggl-report-api.version>toggl-report-api-1.0.1</toggl-report-api.version>
-        <vaadin-chartjs.version>0.4.0</vaadin-chartjs.version>
-        <viritin.version>1.61</viritin.version>
+        <vaadin-chartjs.version>1.0.0</vaadin-chartjs.version>
+
+        <jollyday.version>0.5.2</jollyday.version>
+        <jgravatar.version>1.1</jgravatar.version>
 
         <docker.image.prefix>rocketbaseio</docker.image.prefix>
 
@@ -55,11 +59,29 @@
         </repository>
     </repositories>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-bom</artifactId>
+                <version>${vaadin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring-boot-starter</artifactId>
-            <version>1.2.0</version>
+            <version>${vaadin-spring-boot.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>vaadin-client-compiled</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -80,7 +102,7 @@
         <dependency>
             <groupId>de.jollyday</groupId>
             <artifactId>jollyday</artifactId>
-            <version>0.5.2</version>
+            <version>${jollyday.version}</version>
         </dependency>
 
         <dependency>
@@ -90,44 +112,14 @@
         </dependency>
 
         <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-spring-boot</artifactId>
-            <version>1.2.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.timgroup</groupId>
             <artifactId>jgravatar</artifactId>
-            <version>1.1</version>
+            <version>${jgravatar.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-server</artifactId>
-            <version>${vaadin.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.vaadin</groupId>
-            <artifactId>viritin</artifactId>
-            <version>${viritin.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.byteowls</groupId>
-            <artifactId>vaadin-chartjs</artifactId>
-            <version>${vaadin-chartjs.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>sizereporter</artifactId>
-            <version>0.1.4</version>
         </dependency>
 
         <dependency>
@@ -142,43 +134,42 @@
             <version>${toggl-report-api.version}</version>
         </dependency>
 
-    </dependencies>
+        <!-- vaadin deps -->
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-themes</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-compatibility-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-compatibility-client-compiled</artifactId>
+        </dependency>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-bom</artifactId>
-                <version>${vaadin.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+        <dependency>
+            <groupId>org.vaadin</groupId>
+            <artifactId>viritin</artifactId>
+            <version>${viritin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.byteowls</groupId>
+            <artifactId>vaadin-chartjs</artifactId>
+            <version>${vaadin-chartjs.version}</version>
+        </dependency>
+
+    </dependencies>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-maven-plugin</artifactId>
-                <version>${vaadin.version}</version>
-                <configuration>
-                    <!-- Widget set compilation.
-                         Possible values are: local, cdn, fetch -->
-                    <widgetsetMode>${vaadin.widgetset.mode}</widgetsetMode>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>update-widgetset</goal>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
 
             <plugin>

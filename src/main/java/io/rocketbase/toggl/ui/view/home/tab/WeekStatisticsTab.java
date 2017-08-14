@@ -1,7 +1,7 @@
 package io.rocketbase.toggl.ui.view.home.tab;
 
 import com.google.common.base.Joiner;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
@@ -17,11 +17,11 @@ import io.rocketbase.toggl.ui.view.home.HomeView;
 import org.joda.time.YearMonth;
 import org.threeten.extra.YearWeek;
 import org.vaadin.viritin.MSize;
-import org.vaadin.viritin.fields.MTable;
-import org.vaadin.viritin.fields.TypedSelect;
 import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
+import org.vaadin.viritin.v7.fields.MTable;
+import org.vaadin.viritin.v7.fields.TypedSelect;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -38,6 +38,7 @@ public class WeekStatisticsTab extends AbstractTab<YearMonth> {
     private TogglService togglService;
 
     private MVerticalLayout layout;
+
     private TypedSelect<YearWeek> weekFrom, weekTo;
 
 

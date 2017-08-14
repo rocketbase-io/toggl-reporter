@@ -20,9 +20,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.vaadin.viritin.button.PrimaryButton;
-import org.vaadin.viritin.fields.MPasswordField;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 import org.vaadin.viritin.layouts.MWindow;
+import org.vaadin.viritin.v7.fields.MPasswordField;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;

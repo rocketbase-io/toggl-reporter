@@ -1,21 +1,24 @@
 package io.rocketbase.toggl.ui.view.setting.form;
 
-import com.vaadin.ui.*;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.Window;
 import io.rocketbase.toggl.backend.security.MongoUserDetails;
 import io.rocketbase.toggl.backend.security.UserRole;
-import org.vaadin.viritin.fields.MCheckBox;
-import org.vaadin.viritin.fields.MPasswordField;
-import org.vaadin.viritin.fields.MTextField;
-import org.vaadin.viritin.fields.TypedSelect;
-import org.vaadin.viritin.form.AbstractForm;
 import org.vaadin.viritin.layouts.MVerticalLayout;
+import org.vaadin.viritin.v7.fields.MCheckBox;
+import org.vaadin.viritin.v7.fields.MPasswordField;
+import org.vaadin.viritin.v7.fields.MTextField;
+import org.vaadin.viritin.v7.fields.TypedSelect;
+import org.vaadin.viritin.v7.form.AbstractForm;
 
 import java.util.Arrays;
 
 public class MongoUserForm extends AbstractForm<MongoUserDetails> {
 
-    private TextField username = new MTextField("username").withFullWidth();
-    private PasswordField newPassword = new MPasswordField("password").withFullWidth();
+    private MTextField username = new MTextField("username").withFullWidth();
+
+    private MPasswordField newPassword = new MPasswordField("password").withFullWidth();
 
     private MCheckBox enabled = new MCheckBox("enabled");
 

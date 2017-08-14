@@ -8,10 +8,10 @@ import io.rocketbase.toggl.backend.model.ApplicationSettingModel.SchedulingConfi
 import io.rocketbase.toggl.ui.component.tab.AbstractTab;
 import org.joda.time.LocalDate;
 import org.vaadin.viritin.button.PrimaryButton;
-import org.vaadin.viritin.fields.MCheckBox;
-import org.vaadin.viritin.fields.MDateField;
 import org.vaadin.viritin.label.RichText;
 import org.vaadin.viritin.layouts.MVerticalLayout;
+import org.vaadin.viritin.v7.fields.MCheckBox;
+import org.vaadin.viritin.v7.fields.MDateField;
 
 import javax.annotation.Resource;
 
@@ -26,6 +26,7 @@ public class SchedulingTab extends AbstractTab {
     private TogglService togglService;
 
     private MCheckBox enableScheduling;
+
     private MDateField startSchedulingFrom;
 
     @Override
@@ -59,9 +60,11 @@ public class SchedulingTab extends AbstractTab {
         if (schedulingConfig != null) {
             enableScheduling.setValue(schedulingConfig
                     .isEnableScheduling());
+
             startSchedulingFrom.setValue(schedulingConfig
+                    .getStartSchedulingFrom() != null ? schedulingConfig
                     .getStartSchedulingFrom()
-                    .toDate());
+                    .toDate() : null);
         }
         checkStatus();
     }

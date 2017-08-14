@@ -17,12 +17,12 @@ import io.rocketbase.toggl.ui.view.setting.form.MongoUserForm;
 import org.vaadin.viritin.MSize;
 import org.vaadin.viritin.button.MButton;
 import org.vaadin.viritin.button.PrimaryButton;
-import org.vaadin.viritin.fields.MPasswordField;
-import org.vaadin.viritin.fields.MTable;
-import org.vaadin.viritin.form.AbstractForm.DeleteHandler;
-import org.vaadin.viritin.form.AbstractForm.SavedHandler;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 import org.vaadin.viritin.layouts.MWindow;
+import org.vaadin.viritin.v7.fields.MPasswordField;
+import org.vaadin.viritin.v7.fields.MTable;
+import org.vaadin.viritin.v7.form.AbstractForm.DeleteHandler;
+import org.vaadin.viritin.v7.form.AbstractForm.SavedHandler;
 
 import javax.annotation.Resource;
 

@@ -12,10 +12,10 @@ import io.rocketbase.toggl.ui.component.tab.AbstractTab;
 import io.rocketbase.toggl.ui.view.setting.form.UserDetailForm;
 import org.vaadin.viritin.MSize;
 import org.vaadin.viritin.button.MButton;
-import org.vaadin.viritin.fields.TypedSelect;
 import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
+import org.vaadin.viritin.v7.fields.TypedSelect;
 
 import javax.annotation.Resource;
 import java.util.Arrays;

@@ -9,7 +9,6 @@ import com.byteowls.vaadin.chartjs.options.Tooltips;
 import com.byteowls.vaadin.chartjs.options.scale.Axis;
 import com.byteowls.vaadin.chartjs.options.scale.CategoryScale;
 import com.byteowls.vaadin.chartjs.options.scale.LinearScale;
-import com.ejt.vaadin.sizereporter.SizeReporter;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
@@ -23,10 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.YearMonth;
 import org.vaadin.viritin.MSize;
-import org.vaadin.viritin.fields.TypedSelect;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MPanel;
 import org.vaadin.viritin.layouts.MVerticalLayout;
+import org.vaadin.viritin.v7.fields.TypedSelect;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -42,6 +41,7 @@ public class ChartTab extends AbstractTab<YearMonth> {
     private TimeEntryService timeEntryService;
 
     private MPanel panel;
+
     private TypedSelect<YearMonth> typedSelect;
 
     @Override
@@ -76,21 +76,12 @@ public class ChartTab extends AbstractTab<YearMonth> {
             MVerticalLayout layout = new MVerticalLayout()
                     .add(genChart(typedSelect.getValue()), 1)
                     .withMargin(false)
-                    .withStyleName("chart-container");
+                    .withStyleName("chart-container")
+                    .withSize(MSize.FULL_SIZE);
 
             panel.setContent(new MVerticalLayout()
                     .add(layout, Alignment.MIDDLE_CENTER, 1)
                     .withSize(MSize.FULL_SIZE));
-
-            SizeReporter sizeReporter = new SizeReporter(panel);
-            sizeReporter.addResizeListener(e -> {
-                int height = (int) (e.getHeight() * 0.9);
-                if ((e.getWidth() / 2.0) * 0.95 < height) {
-                    height = (int) (e.getWidth() / 2.0 * 0.95);
-                }
-                layout.setWidth(height * 2, Unit.PIXELS);
-                layout.setHeight(height, Unit.PIXELS);
-            });
 
         } else {
             panel.setContent(HomeView.getPlaceHolder());
