@@ -1,6 +1,6 @@
 package io.rocketbase.toggl.ui.view.setting.tab;
 
-import com.vaadin.server.FontAwesome;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
@@ -43,7 +43,7 @@ public class LoginUserTab extends AbstractTab {
         userTable = initUserTable();
 
         return new MVerticalLayout()
-                .add(new MButton(FontAwesome.PLUS, "add", e -> {
+                .add(new MButton(VaadinIcons.PLUS, "add", e -> {
                     new MongoUserForm(MongoUserDetails.builder()
                             .role(UserRole.ROLE_USER)
                             .build())
@@ -61,7 +61,14 @@ public class LoginUserTab extends AbstractTab {
     private MTable<MongoUserDetails> initUserTable() {
         MTable<MongoUserDetails> table = new MTable<>(MongoUserDetails.class)
                 .withProperties("username", "role", "enabled")
-                .withGeneratedColumn("changePw", user -> new MButton(FontAwesome.KEY, e -> {
+                .withGeneratedColumn("worker",
+                        user -> new MButton(VaadinIcons.USER,
+                                user.getWorker() != null ? user.getWorker()
+                                        .getFullName() : "not linked",
+                                e -> {
+                                    Notification.show("linking needs to get implemented");
+                                }).withStyleName(ValoTheme.BUTTON_BORDERLESS))
+                .withGeneratedColumn("changePw", user -> new MButton(VaadinIcons.KEY, e -> {
                     MPasswordField password = new MPasswordField("password")
                             .withRequired(true)
                             .withFullWidth();
@@ -81,7 +88,7 @@ public class LoginUserTab extends AbstractTab {
                     UI.getCurrent()
                             .addWindow(window);
                 }).withStyleName(ValoTheme.BUTTON_BORDERLESS, ValoTheme.BUTTON_ICON_ONLY))
-                .withGeneratedColumn("edit", user -> new MButton(FontAwesome.PENCIL, e -> {
+                .withGeneratedColumn("edit", user -> new MButton(VaadinIcons.PENCIL, e -> {
                     new MongoUserForm(user)
                             .initEditWindow((SavedHandler<MongoUserDetails>) entity -> {
                                 mongoUserService.updateDetailsExceptPassword(entity);
@@ -96,7 +103,8 @@ public class LoginUserTab extends AbstractTab {
                                 refreshTab();
                             });
                 }).withStyleName(ValoTheme.BUTTON_BORDERLESS, ValoTheme.BUTTON_ICON_ONLY))
-                .withColumnHeaders("username", "role", "enabled", "password", "edit")
+                .withColumnHeaders("username", "role", "enabled", "linked worker", "password", "edit")
+                .withColumnWidth("worker", 100)
                 .withColumnWidth("password", 80)
                 .withColumnWidth("edit", 80)
                 .withColumnExpand("username", 1)

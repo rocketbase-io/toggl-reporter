@@ -1,7 +1,7 @@
 package io.rocketbase.toggl.backend.service;
 
 import io.rocketbase.toggl.backend.config.TogglService;
-import io.rocketbase.toggl.backend.model.DateTimeEntryGroupModel;
+import io.rocketbase.toggl.backend.model.DateTimeEntryGroup;
 import io.rocketbase.toggl.backend.model.report.UserTimeline;
 import io.rocketbase.toggl.backend.model.report.WeekTimeline;
 import io.rocketbase.toggl.backend.repository.DateTimeEntryGroupRepository;
@@ -44,12 +44,12 @@ public class TimeEntryService {
         return (int) dateTimeEntryGroupRepository.count();
     }
 
-    public List<DateTimeEntryGroupModel> findPaged(int page, int perPage) {
+    public List<DateTimeEntryGroup> findPaged(int page, int perPage) {
         return dateTimeEntryGroupRepository.findAll(new PageRequest(page, perPage, Direction.DESC, "date"))
                 .getContent();
     }
 
-    public List<DateTimeEntryGroupModel> getCurrentMonth() {
+    public List<DateTimeEntryGroup> getCurrentMonth() {
         return dateTimeEntryGroupRepository.findByWorkspaceIdAndDateBetween(togglService.getWorkspaceId(),
                 LocalDate.now()
                         .withDayOfMonth(1)
@@ -67,7 +67,7 @@ public class TimeEntryService {
         query.fields()
                 .include("date");
 
-        List<DateTimeEntryGroupModel> queryResult = mongoTemplate.find(query, DateTimeEntryGroupModel.class, DateTimeEntryGroupModel.COLLECTION_NAME);
+        List<DateTimeEntryGroup> queryResult = mongoTemplate.find(query, DateTimeEntryGroup.class, DateTimeEntryGroup.COLLECTION_NAME);
 
         Set<YearMonth> result = new TreeSet<>();
         queryResult.forEach(e -> result.add(new YearMonth(e.getDate())));
@@ -78,7 +78,7 @@ public class TimeEntryService {
     }
 
     public List<UserTimeline> getUserTimeLines(YearMonth yearMonth) {
-        List<DateTimeEntryGroupModel> queryResult = dateTimeEntryGroupRepository.findByWorkspaceIdAndDateBetween(togglService.getWorkspaceId(),
+        List<DateTimeEntryGroup> queryResult = dateTimeEntryGroupRepository.findByWorkspaceIdAndDateBetween(togglService.getWorkspaceId(),
                 yearMonth.toLocalDate(1)
                         .minusDays(1)
                         .toDate(),
@@ -104,7 +104,7 @@ public class TimeEntryService {
         query.fields()
                 .include("date");
 
-        List<DateTimeEntryGroupModel> queryResult = mongoTemplate.find(query, DateTimeEntryGroupModel.class, DateTimeEntryGroupModel.COLLECTION_NAME);
+        List<DateTimeEntryGroup> queryResult = mongoTemplate.find(query, DateTimeEntryGroup.class, DateTimeEntryGroup.COLLECTION_NAME);
 
         Set<YearWeek> result = new TreeSet<>();
         queryResult.forEach(e -> result.add(YearWeek.of(e.getDate()
@@ -119,7 +119,7 @@ public class TimeEntryService {
 
 
     public List<WeekTimeline> getWeekTimelines(@NotNull YearWeek from, YearWeek to) {
-        List<DateTimeEntryGroupModel> queryResult = dateTimeEntryGroupRepository.findByWorkspaceIdAndDateBetween(togglService.getWorkspaceId(),
+        List<DateTimeEntryGroup> queryResult = dateTimeEntryGroupRepository.findByWorkspaceIdAndDateBetween(togglService.getWorkspaceId(),
                 YearWeekUtil.getFirstDay(from)
                         .minusDays(1)
                         .toDate(),

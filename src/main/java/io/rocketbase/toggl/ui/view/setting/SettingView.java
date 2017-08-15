@@ -1,6 +1,6 @@
 package io.rocketbase.toggl.ui.view.setting;
 
-import com.vaadin.server.FontAwesome;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Component;
@@ -39,17 +39,17 @@ public class SettingView extends AbstractView {
     private PullDataTab pullDataTab;
 
     public SettingView() {
-        super(VIEW_NAME, "Setting", FontAwesome.GEARS, 100);
+        super(VIEW_NAME, "Setting", VaadinIcons.WRENCH, 100);
         setUserRole(UserRole.ROLE_ADMIN);
     }
 
     @Override
     public Component initialzeUi() {
         ExtendedTabSheet tabSheet = new ExtendedTabSheet();
-        tabSheet.addTab(FontAwesome.GEARS, "settings", settingTab);
-        tabSheet.addTab(FontAwesome.CALENDAR_TIMES_O, "scheduling", schedulingTab);
-        tabSheet.addTab(FontAwesome.USERS, "login-user", loginUserTab);
-        tabSheet.addTab(FontAwesome.DOWNLOAD, "pull-data", pullDataTab);
+        tabSheet.addTab(VaadinIcons.WRENCH, "settings", settingTab);
+        tabSheet.addTab(VaadinIcons.CALENDAR_CLOCK, "scheduling", schedulingTab);
+        tabSheet.addTab(VaadinIcons.USERS, "login-user", loginUserTab);
+        tabSheet.addTab(VaadinIcons.DOWNLOAD, "pull-data", pullDataTab);
 
 
         return new MVerticalLayout()

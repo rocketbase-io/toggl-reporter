@@ -3,7 +3,7 @@ package io.rocketbase.toggl.backend.service;
 import io.rocketbase.toggl.api.model.TimeEntry;
 import io.rocketbase.toggl.api.util.FetchAllDetailed;
 import io.rocketbase.toggl.backend.config.TogglService;
-import io.rocketbase.toggl.backend.model.DateTimeEntryGroupModel;
+import io.rocketbase.toggl.backend.model.DateTimeEntryGroup;
 import io.rocketbase.toggl.backend.repository.DateTimeEntryGroupRepository;
 import lombok.SneakyThrows;
 import org.joda.time.DateTime;
@@ -65,14 +65,14 @@ public class FetchAndStoreService {
                         .toDate());
 
 
-        List<DateTimeEntryGroupModel> newEntities = new ArrayList<>();
+        List<DateTimeEntryGroup> newEntities = new ArrayList<>();
 
         Map<LocalDate, List<TimeEntry>> dateListMap = timeEntryList.stream()
                 .collect(Collectors.groupingBy(e -> e.getStart()
                         .toLocalDate()));
 
         dateListMap.forEach((date, timeEntries) -> {
-            newEntities.add(DateTimeEntryGroupModel.builder()
+            newEntities.add(DateTimeEntryGroup.builder()
                     .date(date)
                     .workspaceId(togglService.getWorkspaceId())
                     .fetched(fetchedDate)

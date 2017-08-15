@@ -8,9 +8,9 @@ import com.timgroup.jgravatar.GravatarDefaultImage;
 import de.jollyday.HolidayCalendar;
 import io.rocketbase.toggl.api.TogglReportApi;
 import io.rocketbase.toggl.api.TogglReportApiBuilder;
-import io.rocketbase.toggl.backend.model.ApplicationSettingModel;
-import io.rocketbase.toggl.backend.model.ApplicationSettingModel.SchedulingConfig;
-import io.rocketbase.toggl.backend.model.ApplicationSettingModel.UserDetails;
+import io.rocketbase.toggl.backend.model.ApplicationSetting;
+import io.rocketbase.toggl.backend.model.ApplicationSetting.SchedulingConfig;
+import io.rocketbase.toggl.backend.model.ApplicationSetting.UserDetails;
 import io.rocketbase.toggl.backend.repository.ApplicationSettingRepository;
 import io.rocketbase.toggl.backend.util.ColorPalette;
 import lombok.Getter;
@@ -19,7 +19,9 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class TogglService implements TogglReportApiBuilder.WorkspaceProvider {
     @Resource
     private ApplicationSettingRepository applicationSettingRepository;
 
-    private ApplicationSettingModel applicationSettings;
+    private ApplicationSetting applicationSettings;
 
     @Getter
     private JToggl jToggl;
@@ -44,9 +46,9 @@ public class TogglService implements TogglReportApiBuilder.WorkspaceProvider {
 
     @PostConstruct
     public void init() {
-        List<ApplicationSettingModel> entities = applicationSettingRepository.findAll();
+        List<ApplicationSetting> entities = applicationSettingRepository.findAll();
         if (entities == null || entities.size() <= 0) {
-            applicationSettings = applicationSettingRepository.save(ApplicationSettingModel.builder()
+            applicationSettings = applicationSettingRepository.save(ApplicationSetting.builder()
                     .currentWorkspaceId(-1)
                     .workspaceMap(new HashMap<>())
                     .userMap(new HashMap<>())
@@ -153,6 +155,15 @@ public class TogglService implements TogglReportApiBuilder.WorkspaceProvider {
     public void updateHolidayCalendar(HolidayCalendar holidayCalendar) {
         applicationSettings.setHolidayCalendar(holidayCalendar);
         applicationSettingRepository.save(applicationSettings);
+    }
+
+    public void updateRegularWorkinsDays(List<DayOfWeek> dayOfWeeks) {
+        applicationSettings.setRegularWorkinsDays(dayOfWeeks);
+        applicationSettingRepository.save(applicationSettings);
+    }
+
+    public List<DayOfWeek> getRegularWorkinsDays() {
+        return applicationSettings.getRegularWorkinsDays() == null ? Collections.emptyList() : applicationSettings.getRegularWorkinsDays();
     }
 
     public SchedulingConfig getSchedulingConfig() {

@@ -1,7 +1,7 @@
 package io.rocketbase.toggl.backend.scheduler;
 
 import io.rocketbase.toggl.backend.config.TogglService;
-import io.rocketbase.toggl.backend.model.ApplicationSettingModel.SchedulingConfig;
+import io.rocketbase.toggl.backend.model.ApplicationSetting.SchedulingConfig;
 import io.rocketbase.toggl.backend.service.FetchAndStoreService;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDate;

@@ -1,10 +1,12 @@
 package io.rocketbase.toggl.backend.security;
 
+import io.rocketbase.toggl.backend.model.Worker;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,6 +32,9 @@ public class MongoUserDetails implements UserDetails {
     private String password;
 
     private UserRole role;
+
+    @DBRef
+    private Worker worker;
 
     private boolean enabled = true;
 

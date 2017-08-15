@@ -1,7 +1,7 @@
 package io.rocketbase.toggl.ui.view.home;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
@@ -36,7 +36,7 @@ public class HomeView extends AbstractView {
     private WeekStatisticsTab weekStatisticsTab;
 
     public HomeView() {
-        super(VIEW_NAME, "Chart", FontAwesome.LINE_CHART, 0);
+        super(VIEW_NAME, "Chart", VaadinIcons.LINE_CHART, 0);
     }
 
     public static Component getPlaceHolder() {
@@ -48,9 +48,9 @@ public class HomeView extends AbstractView {
     @Override
     public Component initialzeUi() {
         ExtendedTabSheet tabSheet = new ExtendedTabSheet();
-        tabSheet.addTab(FontAwesome.LINE_CHART, "chart", chartTab);
-        tabSheet.addTab(FontAwesome.STAR_O, "month-statistics", monthStatisticsTab);
-        tabSheet.addTab(FontAwesome.CALENDAR, "week-statistics", weekStatisticsTab);
+        tabSheet.addTab(VaadinIcons.LINE_CHART, "chart", chartTab);
+        tabSheet.addTab(VaadinIcons.STAR_O, "month-statistics", monthStatisticsTab);
+        tabSheet.addTab(VaadinIcons.CALENDAR, "week-statistics", weekStatisticsTab);
 
 
         return new MVerticalLayout()

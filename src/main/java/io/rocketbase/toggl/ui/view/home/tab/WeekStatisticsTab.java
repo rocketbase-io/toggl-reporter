@@ -8,7 +8,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.themes.ValoTheme;
 import io.rocketbase.toggl.backend.config.TogglService;
-import io.rocketbase.toggl.backend.model.ApplicationSettingModel.UserDetails;
+import io.rocketbase.toggl.backend.model.ApplicationSetting.UserDetails;
 import io.rocketbase.toggl.backend.model.report.UserTimeline.WeekStatistics;
 import io.rocketbase.toggl.backend.model.report.WeekTimeline;
 import io.rocketbase.toggl.backend.service.TimeEntryService;

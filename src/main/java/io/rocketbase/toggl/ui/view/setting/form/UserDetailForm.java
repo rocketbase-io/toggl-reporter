@@ -5,7 +5,7 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Image;
-import io.rocketbase.toggl.backend.model.ApplicationSettingModel.UserDetails;
+import io.rocketbase.toggl.backend.model.ApplicationSetting.UserDetails;
 import io.rocketbase.toggl.backend.util.ColorPalette;
 import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MHorizontalLayout;

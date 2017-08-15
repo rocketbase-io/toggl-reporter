@@ -8,17 +8,23 @@ import org.joda.time.LocalDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.DayOfWeek;
+import java.util.List;
 import java.util.Map;
+
+import static io.rocketbase.toggl.backend.model.ApplicationSetting.COLLECTION_NAME;
 
 /**
  * Created by marten on 08.03.17.
  */
-@Document(collection = "applicationSettings")
+@Document(collection = COLLECTION_NAME)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ApplicationSettingModel {
+public class ApplicationSetting {
+
+    public static final String COLLECTION_NAME = "applicationSettings";
 
     @Id
     private String id;
@@ -33,6 +39,8 @@ public class ApplicationSettingModel {
 
     private HolidayCalendar holidayCalendar;
 
+    private List<DayOfWeek> regularWorkinsDays;
+
     private SchedulingConfig schedulingConfig = SchedulingConfig.EMPTY;
 
     @Data
@@ -40,10 +48,13 @@ public class ApplicationSettingModel {
     public static class UserDetails {
 
         private final long uid;
+
         private final String name;
+
         private final String email;
 
         private ColorPalette graphColor;
+
         private String avatar;
 
     }
@@ -52,6 +63,7 @@ public class ApplicationSettingModel {
     @Data
     @RequiredArgsConstructor
     public static class SchedulingConfig {
+
         public static final SchedulingConfig EMPTY = new SchedulingConfig(false, null);
 
         private final boolean enableScheduling;

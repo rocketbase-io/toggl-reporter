@@ -4,7 +4,7 @@ import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Component;
 import io.rocketbase.toggl.backend.config.TogglService;
-import io.rocketbase.toggl.backend.model.ApplicationSettingModel.SchedulingConfig;
+import io.rocketbase.toggl.backend.model.ApplicationSetting.SchedulingConfig;
 import io.rocketbase.toggl.ui.component.tab.AbstractTab;
 import org.joda.time.LocalDate;
 import org.vaadin.viritin.button.PrimaryButton;

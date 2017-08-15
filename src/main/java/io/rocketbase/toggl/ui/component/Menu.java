@@ -1,6 +1,6 @@
 package io.rocketbase.toggl.ui.component;
 
-import com.vaadin.server.FontAwesome;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.FontIcon;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.spring.annotation.SpringComponent;
@@ -34,7 +34,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Menu extends CssLayout {
 
     private static final String VALO_MENUITEMS = "valo-menuitems";
+
     private static final String VALO_MENU_TOGGLE = "valo-menu-toggle";
+
     private static final String VALO_MENU_VISIBLE = "valo-menu-visible";
 
     @Value("${application.title}")
@@ -43,6 +45,7 @@ public class Menu extends CssLayout {
     private Map<String, MenuEntry> viewMenus = new HashMap<>();
 
     private CssLayout menuItemsLayout;
+
     private CssLayout menuPart;
 
     @Resource
@@ -88,7 +91,7 @@ public class Menu extends CssLayout {
         showMenu.addStyleName(ValoTheme.BUTTON_PRIMARY);
         showMenu.addStyleName(ValoTheme.BUTTON_SMALL);
         showMenu.addStyleName(VALO_MENU_TOGGLE);
-        showMenu.setIcon(FontAwesome.NAVICON);
+        showMenu.setIcon(VaadinIcons.MENU);
         menuPart.addComponent(showMenu);
 
         // container for the navigation buttons, which are added by addView()
@@ -104,13 +107,13 @@ public class Menu extends CssLayout {
 
     private Component initLogoutMenu() {
         MenuBar logoutMenu = new MenuBar();
-        MenuBar.MenuItem logout = logoutMenu.addItem("", FontAwesome.SIGN_OUT, (MenuBar.Command) selectedItem -> {
+        MenuBar.MenuItem logout = logoutMenu.addItem("", VaadinIcons.SIGN_OUT, (MenuBar.Command) selectedItem -> {
             UI.getCurrent()
                     .getPage()
                     .setLocation("logout");
         });
         logout.setDescription("logout");
-        MenuBar.MenuItem changePassword = logoutMenu.addItem("", FontAwesome.KEY, (MenuBar.Command) selectedItem -> {
+        MenuBar.MenuItem changePassword = logoutMenu.addItem("", VaadinIcons.KEY, (MenuBar.Command) selectedItem -> {
             MPasswordField password = new MPasswordField("password")
                     .withRequired(true)
                     .withFullWidth();
@@ -200,9 +203,13 @@ public class Menu extends CssLayout {
     @RequiredArgsConstructor
     private static class MenuEntry {
         private final String name, caption;
+
         private final FontIcon icon;
+
         private final int order;
+
         private final UserRole role;
+
         @Setter
         private Button button;
     }

@@ -2,12 +2,12 @@ package io.rocketbase.toggl.ui.view.setting.tab;
 
 import ch.simas.jtoggl.domain.Workspace;
 import com.vaadin.data.ValueProvider;
-import com.vaadin.server.FontAwesome;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import io.rocketbase.toggl.backend.config.TogglService;
-import io.rocketbase.toggl.backend.model.DateTimeEntryGroupModel;
+import io.rocketbase.toggl.backend.model.DateTimeEntryGroup;
 import io.rocketbase.toggl.backend.model.report.UserTimeline;
 import io.rocketbase.toggl.backend.service.FetchAndStoreService;
 import io.rocketbase.toggl.backend.service.TimeEntryService;
@@ -49,7 +49,7 @@ public class PullDataTab extends AbstractTab {
     @Resource
     private TimeEntryService timeEntryService;
 
-    private MGrid<DateTimeEntryGroupModel> dateTimeGrid;
+    private MGrid<DateTimeEntryGroup> dateTimeGrid;
 
     @Override
     public Component initLayout() {
@@ -101,7 +101,7 @@ public class PullDataTab extends AbstractTab {
         MDateField to = new MDateField("to").withFullWidth();
         to.setEnabled(workspaceSelected);
 
-        MButton fetch = new MButton(FontAwesome.DOWNLOAD, "fetch", e -> {
+        MButton fetch = new MButton(VaadinIcons.DOWNLOAD, "fetch", e -> {
             if (from.getValue() != null && to.getValue() != null) {
                 final UI ui = UI.getCurrent();
                 ui.setPollInterval(100);
@@ -154,23 +154,23 @@ public class PullDataTab extends AbstractTab {
                 .withCenter();
     }
 
-    private MGrid<DateTimeEntryGroupModel> initFetchedDataTable() {
-        MGrid<DateTimeEntryGroupModel> grid = new MGrid<>(DateTimeEntryGroupModel.class)
+    private MGrid<DateTimeEntryGroup> initFetchedDataTable() {
+        MGrid<DateTimeEntryGroup> grid = new MGrid<>(DateTimeEntryGroup.class)
                 .withProperties()
                 .withSize(MSize.FULL_SIZE);
-        grid.addComponentColumn((ValueProvider<DateTimeEntryGroupModel, Component>) bean -> new MLabel(togglService.getWorkspaceById(bean.getWorkspaceId())
+        grid.addComponentColumn((ValueProvider<DateTimeEntryGroup, Component>) bean -> new MLabel(togglService.getWorkspaceById(bean.getWorkspaceId())
                 .getName()))
                 .setCaption("workspace");
         grid.addColumn("date")
                 .setCaption("date");
-        grid.addComponentColumn((ValueProvider<DateTimeEntryGroupModel, Component>) bean ->
+        grid.addComponentColumn((ValueProvider<DateTimeEntryGroup, Component>) bean ->
                 new MLabel(bean.getFetched() != null ? bean.getFetched()
                         .toString(DATE_TIME_FORMAT) : "-"))
                 .setCaption("fetched");
-        grid.addComponentColumn((ValueProvider<DateTimeEntryGroupModel, Component>) bean -> new MLabel(String.valueOf(bean.getUserTimeEntriesMap()
+        grid.addComponentColumn((ValueProvider<DateTimeEntryGroup, Component>) bean -> new MLabel(String.valueOf(bean.getUserTimeEntriesMap()
                 .size())))
                 .setCaption("count of users");
-        grid.addComponentColumn((ValueProvider<DateTimeEntryGroupModel, Component>) bean -> {
+        grid.addComponentColumn((ValueProvider<DateTimeEntryGroup, Component>) bean -> {
             AtomicLong totalMilliseconds = new AtomicLong(0);
             bean.getUserTimeEntriesMap()
                     .forEach((user, timeEntries) -> {

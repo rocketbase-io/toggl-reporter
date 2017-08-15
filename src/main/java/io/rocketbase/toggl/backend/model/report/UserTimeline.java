@@ -1,7 +1,7 @@
 package io.rocketbase.toggl.backend.model.report;
 
 import io.rocketbase.toggl.api.model.TimeEntry;
-import io.rocketbase.toggl.backend.model.ApplicationSettingModel.UserDetails;
+import io.rocketbase.toggl.backend.model.ApplicationSetting.UserDetails;
 import io.rocketbase.toggl.backend.util.YearMonthUtil;
 import io.rocketbase.toggl.backend.util.YearWeekUtil;
 import lombok.Getter;
@@ -37,7 +37,9 @@ public class UserTimeline {
     private final YearMonth yearMonth;
 
     private Map<LocalDate, List<TimeEntry>> dateTimeEntriesMap = new TreeMap<>();
+
     private Map<Integer, WeekStatistics> cachedStatistics = null;
+
     private WeekStatistics cachedWeekStatistics = null;
 
     public static double roundedHours(long milliseconds) {
@@ -152,9 +154,13 @@ public class UserTimeline {
     @RequiredArgsConstructor
     public static class WeekStatistics {
         private final int weekOfWeekyear;
+
         private final double totalHours;
+
         private final int workedDays;
+
         private final double billableHours;
+
         private final long billableAmount;
 
         public double getAverageHoursPerDay() {
