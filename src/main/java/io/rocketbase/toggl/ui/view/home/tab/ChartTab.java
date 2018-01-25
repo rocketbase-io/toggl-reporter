@@ -12,6 +12,7 @@ import com.byteowls.vaadin.chartjs.options.scale.LinearScale;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import io.rocketbase.toggl.backend.model.report.UserTimeline;
 import io.rocketbase.toggl.backend.service.TimeEntryService;
@@ -25,7 +26,6 @@ import org.vaadin.viritin.MSize;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MPanel;
 import org.vaadin.viritin.layouts.MVerticalLayout;
-import org.vaadin.viritin.v7.fields.TypedSelect;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -42,19 +42,17 @@ public class ChartTab extends AbstractTab<YearMonth> {
 
     private MPanel panel;
 
-    private TypedSelect<YearMonth> typedSelect;
+    private ComboBox<YearMonth> typedSelect = new ComboBox<>();
 
     @Override
     public Component initLayout() {
         panel = new MPanel(HomeView.getPlaceHolder())
                 .withSize(MSize.FULL_SIZE);
 
-        typedSelect = new TypedSelect<>(YearMonth.class).asComboBoxType()
-                .setNullSelectionAllowed(false)
-                .addMValueChangeListener(e -> {
-                    filter();
-                })
-                .withWidth("200px");
+        typedSelect.setEmptySelectionAllowed(false);
+        typedSelect.setTextInputAllowed(false);
+        typedSelect.setWidth("100%");
+        typedSelect.addValueChangeListener(e -> filter());
 
         return new MVerticalLayout()
                 .add(new MHorizontalLayout()
@@ -66,8 +64,11 @@ public class ChartTab extends AbstractTab<YearMonth> {
 
     @Override
     public void onTabEnter() {
-        typedSelect.setBeans(timeEntryService.fetchAllYearMonths())
-                .selectFirst();
+        List<YearMonth> items = timeEntryService.fetchAllYearMonths();
+        typedSelect.setItems(items);
+        if (typedSelect.getValue() == null && items != null && !items.isEmpty()) {
+            typedSelect.setValue(items.get(0));
+        }
         filter();
     }
 

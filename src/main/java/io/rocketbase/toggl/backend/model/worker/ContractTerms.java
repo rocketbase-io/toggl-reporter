@@ -10,6 +10,7 @@ import org.joda.time.LocalDate;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -19,7 +20,7 @@ public class ContractTerms {
 
     private String name;
 
-    private List<DayOfWeek> weeklyWorkingDays;
+    private Set<DayOfWeek> weeklyWorkingDays;
 
     private BigDecimal weeklyWorkingHours;
 

@@ -5,6 +5,7 @@ import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CheckBoxGroup;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.themes.ValoTheme;
 import de.jollyday.HolidayCalendar;
@@ -17,11 +18,9 @@ import org.vaadin.viritin.button.MButton;
 import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
-import org.vaadin.viritin.v7.fields.TypedSelect;
 
 import javax.annotation.Resource;
 import java.time.DayOfWeek;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -35,11 +34,11 @@ public class SettingTab extends AbstractTab {
     @Resource
     private TogglService togglService;
 
-    private TypedSelect<HolidayCalendar> holidayCalendarTypedSelect;
+    private ComboBox<HolidayCalendar> holidayCalendarTypedSelect;
 
     private CheckBoxGroup<DayOfWeek> workingDaysSelect;
 
-    private TypedSelect<UserDetails> userTypedSelect;
+    private ComboBox<UserDetails> userTypedSelect;
 
     private UserDetailForm userDetailForm;
 
@@ -74,15 +73,12 @@ public class SettingTab extends AbstractTab {
     }
 
 
-    private TypedSelect<HolidayCalendar> initHolidayCalenderTypeSelect() {
-        return new TypedSelect<>(HolidayCalendar.class).asComboBoxType()
-                .withCaption("HolidayCalendar")
-                .withDescription("get displayed in below detailed statistics")
-                .addMValueChangeListener(e -> {
-                    togglService.updateHolidayCalendar(e.getValue());
-                })
-                .withFullWidth()
-                .setBeans(Arrays.asList(HolidayCalendar.values()));
+    private ComboBox<HolidayCalendar> initHolidayCalenderTypeSelect() {
+        ComboBox<HolidayCalendar> combo = new ComboBox<>("HolidayCalendar", Arrays.asList(HolidayCalendar.values()));
+        combo.setDescription("get displayed in below detailed statistics");
+        combo.setWidth("100%");
+        combo.addValueChangeListener(e -> togglService.updateHolidayCalendar(e.getValue()));
+        return combo;
     }
 
     private CheckBoxGroup<DayOfWeek> initWorkingDaysSelect() {
@@ -91,30 +87,29 @@ public class SettingTab extends AbstractTab {
         checkBoxGroup.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
         checkBoxGroup.setItems(DayOfWeek.values());
         checkBoxGroup.addValueChangeListener(e -> {
-            togglService.updateRegularWorkinsDays(new ArrayList<>(e.getValue()));
+            togglService.updateRegularWorkinsDays(e.getValue());
         });
         checkBoxGroup.setWidth("100%");
         return checkBoxGroup;
     }
 
-    private TypedSelect<UserDetails> initUserTypeSelect() {
-        return new TypedSelect<>(UserDetails.class)
-                .asComboBoxType()
-                .withCaption("User-Settings")
-                .setCaptionGenerator(u -> u.getName())
-                .addMValueChangeListener(e -> {
-                    userDetailForm.setVisible(e.getValue() != null);
-                    placeHolder.setVisible(e.getValue() == null);
-                    if (e.getValue() != null) {
-                        userDetailForm.setEntity(e.getValue());
-                    }
-                })
-                .withFullWidth();
+    private ComboBox<UserDetails> initUserTypeSelect() {
+        ComboBox<UserDetails> combo = new ComboBox<>("User-Settings");
+        combo.setItemCaptionGenerator(u -> u.getName());
+        combo.setWidth("100%");
+        combo.addValueChangeListener(e -> {
+            userDetailForm.setVisible(e.getValue() != null);
+            placeHolder.setVisible(e.getValue() == null);
+            if (e.getValue() != null) {
+                userDetailForm.setEntity(e.getValue());
+            }
+        });
+        return combo;
     }
 
     @Override
     public void onTabEnter() {
-        userTypedSelect.setBeans(togglService.getAllUsers());
+        userTypedSelect.setItems(togglService.getAllUsers());
         holidayCalendarTypedSelect.setValue(togglService.getHolidayCalender());
         workingDaysSelect.setValue(new HashSet<>(togglService.getRegularWorkinsDays()));
     }

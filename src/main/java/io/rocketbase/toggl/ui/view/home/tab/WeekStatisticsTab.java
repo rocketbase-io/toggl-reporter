@@ -4,8 +4,10 @@ import com.google.common.base.Joiner;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Alignment;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.components.grid.FooterRow;
 import com.vaadin.ui.themes.ValoTheme;
 import io.rocketbase.toggl.backend.config.TogglService;
 import io.rocketbase.toggl.backend.model.ApplicationSetting.UserDetails;
@@ -20,8 +22,6 @@ import org.vaadin.viritin.MSize;
 import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
-import org.vaadin.viritin.v7.fields.MTable;
-import org.vaadin.viritin.v7.fields.TypedSelect;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -39,7 +39,7 @@ public class WeekStatisticsTab extends AbstractTab<YearMonth> {
 
     private MVerticalLayout layout;
 
-    private TypedSelect<YearWeek> weekFrom, weekTo;
+    private ComboBox<YearWeek> weekFrom = new ComboBox<>(), weekTo = new ComboBox<>();
 
 
     @Override
@@ -50,38 +50,40 @@ public class WeekStatisticsTab extends AbstractTab<YearMonth> {
                 .add(HomeView.getPlaceHolder(), 1);
 
 
-        weekFrom = new TypedSelect<>(YearWeek.class).asComboBoxType()
-                .setNullSelectionAllowed(false)
-                .addMValueChangeListener(e -> {
-                    if (e.getValue() != null && weekTo.getValue() != null) {
-                        if (weekTo.getValue()
-                                .isBefore(e.getValue())) {
-                            weekTo.setValue(null);
-                        }
-                    }
+        weekFrom.setEmptySelectionAllowed(false);
+        weekFrom.setTextInputAllowed(false);
+        weekFrom.setWidth("100%");
+        weekFrom.addValueChangeListener(e -> {
+            if (e.getValue() != null && weekTo.getValue() != null) {
+                if (weekTo.getValue()
+                        .isBefore(e.getValue())) {
+                    weekTo.setValue(null);
+                }
+            }
+            filter();
+        });
+
+
+        weekTo.setEmptySelectionAllowed(false);
+        weekTo.setTextInputAllowed(false);
+        weekTo.setWidth("100%");
+        weekTo.addValueChangeListener(e -> {
+            if (e.getValue() != null) {
+                if (weekFrom.getValue() != null && e.getValue()
+                        .isAfter(weekFrom.getValue())) {
                     filter();
-                })
-                .withWidth("200px");
-        weekTo = new TypedSelect<>(YearWeek.class).asComboBoxType()
-                .setNullSelectionAllowed(false)
-                .addMValueChangeListener(e -> {
-                    if (e.getValue() != null) {
-                        if (weekFrom.getValue() != null && e.getValue()
-                                .isAfter(weekFrom.getValue())) {
-                            filter();
-                            return;
-                        } else {
-                            weekTo.setValue(null);
-                        }
-                    }
-                    filter();
-                })
-                .withWidth("200px");
+                    return;
+                } else {
+                    weekTo.setValue(null);
+                }
+            }
+            filter();
+        });
 
         return new MVerticalLayout()
                 .add(new MHorizontalLayout()
-                        .add(weekFrom, Alignment.MIDDLE_RIGHT, 1)
-                        .add(weekTo, Alignment.MIDDLE_RIGHT)
+                        .add(weekFrom, 1)
+                        .add(weekTo, 1)
                         .withFullWidth())
                 .add(layout, 1)
                 .withSize(MSize.FULL_SIZE);
@@ -91,8 +93,8 @@ public class WeekStatisticsTab extends AbstractTab<YearMonth> {
     public void onTabEnter() {
         layout.removeAllComponents();
         List<YearWeek> yearWeekList = timeEntryService.fetchAllYearWeeks();
-        weekFrom.setBeans(yearWeekList);
-        weekTo.setBeans(yearWeekList);
+        weekFrom.setItems(yearWeekList);
+        weekTo.setItems(yearWeekList);
         filter();
     }
 
@@ -108,32 +110,51 @@ public class WeekStatisticsTab extends AbstractTab<YearMonth> {
 
     protected Component genTable(List<WeekTimeline> data) {
 
-        MTable<WeekTimeline> table = new MTable<>(WeekTimeline.class)
-                .withProperties()
-                .withStyleName("week-statistics")
-                .withGeneratedColumn("week", e -> new MVerticalLayout()
-                        .withFullWidth()
-                        .withMargin(false)
-                        .add(new MLabel(e.getYearWeek()
-                                .toString()).withStyleName(ValoTheme.LABEL_BOLD, ValoTheme.LABEL_LARGE))
-                        .add(genLabelInfo("Total hours", e.getTotalHours()))
-                        .add(genLabelInfo("Billable hours", e.getBillableHours()))
-                        .add(genLabelInfo("Earned", e.getBillableAmount()))
-                        .add(genLabelInfo("Holidays",
-                                e.getHolidays()
-                                        .size() > 0 ? "<button title=\"" + Joiner.on(", ")
-                                        .join(e.getHolidays()) + "\">" + e.getHolidays()
-                                        .size() + "</button>" : "-")
-                                .withStyleName("left-right"))
-                        .withStyleName("cell-content-wrapper"))
-                .withColumnWidth("week", 240)
-                .withSize(MSize.FULL_SIZE);
-        table.setColumnHeader("week", "Week");
+        Grid<WeekTimeline> grid = new Grid<>(null, data);
+        grid.addStyleName("week-statistics");
+        grid.setSizeFull();
+        grid.setBodyRowHeight(150);
+        grid.setFooterRowHeight(75);
+
+        Grid.Column weekCol = grid.addComponentColumn(e -> {
+            return new MVerticalLayout()
+                    .withFullWidth()
+                    .withMargin(false)
+                    .withSpacing(false)
+                    .add(new MLabel(e.getYearWeek()
+                            .toString()).withStyleName(ValoTheme.LABEL_BOLD, ValoTheme.LABEL_LARGE))
+                    .add(genLabelInfo("Total hours", e.getTotalHours()))
+                    .add(genLabelInfo("Billable hours", e.getBillableHours()))
+                    .add(genLabelInfo("Earned", e.getBillableAmount()))
+                    .add(genLabelInfo("Holidays",
+                            e.getHolidays()
+                                    .size() > 0 ? "<button title=\"" + Joiner.on(", ")
+                                    .join(e.getHolidays()) + "\">" + e.getHolidays()
+                                    .size() + "</button>" : "-")
+                            .withStyleName("left-right"))
+                    .withStyleName("cell-content-wrapper");
+        })
+                .setCaption("week")
+                .setWidth(240);
+
+        String format = "<div class=\"footer-key-value\"><span>Hours:</span> %s</div><div class=\"footer-key-value\"><span>Earned:</span> %s</div>";
+
+        grid.setFooterVisible(true);
+        FooterRow footer = grid.addFooterRowAt(0);
+        footer.getCell(weekCol)
+                .setHtml(String.format(format,
+                        Math.round(data.stream()
+                                .mapToDouble(e -> e.getTotalHours())
+                                .sum() * 10.0) / 10.0,
+                        data.stream()
+                                .mapToLong(e -> e.getBillableAmount())
+                                .sum()));
+
 
         List<UserDetails> userList = togglService.getAllUsers();
         userList.forEach(user -> {
-            String columnId = String.valueOf(user.getUid());
-            table.withGeneratedColumn(columnId, e -> {
+
+            Grid.Column userCol = grid.addComponentColumn(e -> {
                 if (e.getUidTimelines()
                         .containsKey(user.getUid())) {
                     WeekStatistics stat = e.getUidTimelines()
@@ -142,6 +163,7 @@ public class WeekStatisticsTab extends AbstractTab<YearMonth> {
                     return new MVerticalLayout()
                             .withFullWidth()
                             .withMargin(false)
+                            .withSpacing(false)
                             .add(genLabelInfo("Total hours", stat.getTotalHours()))
                             .add(genLabelInfo("Billable hours", stat.getBillableHours()))
                             .add(genLabelInfo("Earned", stat.getBillableAmount()))
@@ -151,25 +173,12 @@ public class WeekStatisticsTab extends AbstractTab<YearMonth> {
                 } else {
                     return null;
                 }
-            });
-            table.setColumnHeader(columnId, user.getName());
-            table.setColumnWidth(columnId, 190);
-        });
-        table.setBeans(data);
-        table.setFooterVisible(true);
-        String format = "<div class=\"footer-key-value\"><span>Hours:</span> %s</div><div class=\"footer-key-value\"><span>Earned:</span> %s</div>";
-        table.setColumnFooter("week",
-                String.format(format,
-                        Math.round(data.stream()
-                                .mapToDouble(e -> e.getTotalHours())
-                                .sum() * 10.0) / 10.0,
-                        data.stream()
-                                .mapToLong(e -> e.getBillableAmount())
-                                .sum()));
-        userList.forEach(user -> {
-            String columnId = String.valueOf(user.getUid());
-            table.setColumnFooter(columnId,
-                    String.format(format,
+            })
+                    .setCaption(user.getName())
+                    .setWidth(190);
+
+            footer.getCell(userCol)
+                    .setHtml(String.format(format,
                             Math.round(data.stream()
                                     .filter(e -> e.getUidTimelines()
                                             .containsKey(user.getUid()))
@@ -187,7 +196,8 @@ public class WeekStatisticsTab extends AbstractTab<YearMonth> {
                                             .getBillableAmount())
                                     .sum()));
         });
-        return table;
+
+        return grid;
     }
 
     private MLabel genLabelInfo(String caption, Number value) {

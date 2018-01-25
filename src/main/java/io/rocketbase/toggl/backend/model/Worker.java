@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.joda.time.LocalDate;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -25,6 +26,9 @@ import static io.rocketbase.toggl.backend.model.Worker.COLLECTION_NAME;
 public class Worker {
 
     public static final String COLLECTION_NAME = "workers";
+
+    @Id
+    private String id;
 
     private String firstName;
 

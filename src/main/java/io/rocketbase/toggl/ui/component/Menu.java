@@ -22,7 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.vaadin.viritin.button.PrimaryButton;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 import org.vaadin.viritin.layouts.MWindow;
-import org.vaadin.viritin.v7.fields.MPasswordField;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -114,9 +113,8 @@ public class Menu extends CssLayout {
         });
         logout.setDescription("logout");
         MenuBar.MenuItem changePassword = logoutMenu.addItem("", VaadinIcons.KEY, (MenuBar.Command) selectedItem -> {
-            MPasswordField password = new MPasswordField("password")
-                    .withRequired(true)
-                    .withFullWidth();
+            PasswordField password = new PasswordField("password");
+            password.setWidth("100%");
 
             MWindow window = new MWindow("change password")
                     .withModal(true)

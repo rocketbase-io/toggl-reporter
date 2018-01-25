@@ -20,10 +20,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.time.DayOfWeek;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by marten on 09.03.17.
@@ -157,13 +154,13 @@ public class TogglService implements TogglReportApiBuilder.WorkspaceProvider {
         applicationSettingRepository.save(applicationSettings);
     }
 
-    public void updateRegularWorkinsDays(List<DayOfWeek> dayOfWeeks) {
+    public void updateRegularWorkinsDays(Set<DayOfWeek> dayOfWeeks) {
         applicationSettings.setRegularWorkinsDays(dayOfWeeks);
         applicationSettingRepository.save(applicationSettings);
     }
 
-    public List<DayOfWeek> getRegularWorkinsDays() {
-        return applicationSettings.getRegularWorkinsDays() == null ? Collections.emptyList() : applicationSettings.getRegularWorkinsDays();
+    public Set<DayOfWeek> getRegularWorkinsDays() {
+        return applicationSettings.getRegularWorkinsDays() == null ? Collections.emptySet() : applicationSettings.getRegularWorkinsDays();
     }
 
     public SchedulingConfig getSchedulingConfig() {

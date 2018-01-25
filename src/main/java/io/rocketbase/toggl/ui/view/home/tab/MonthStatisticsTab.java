@@ -5,10 +5,7 @@ import com.vaadin.server.ExternalResource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.UI;
+import com.vaadin.ui.*;
 import de.jollyday.Holiday;
 import io.rocketbase.toggl.backend.model.report.UserTimeline;
 import io.rocketbase.toggl.backend.service.HolidayManagerService;
@@ -22,9 +19,6 @@ import org.vaadin.viritin.MSize;
 import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
-import org.vaadin.viritin.v7.fields.MTable;
-import org.vaadin.viritin.v7.fields.MTextArea;
-import org.vaadin.viritin.v7.fields.TypedSelect;
 
 import javax.annotation.Resource;
 import java.time.format.DateTimeFormatter;
@@ -47,7 +41,7 @@ public class MonthStatisticsTab extends AbstractTab<YearMonth> {
 
     private MVerticalLayout layout;
 
-    private TypedSelect<YearMonth> typedSelect;
+    private ComboBox<YearMonth> typedSelect = new ComboBox<>();
 
 
     @Override
@@ -57,12 +51,11 @@ public class MonthStatisticsTab extends AbstractTab<YearMonth> {
                 .withMargin(false)
                 .add(HomeView.getPlaceHolder(), 1);
 
-        typedSelect = new TypedSelect<>(YearMonth.class).asComboBoxType()
-                .setNullSelectionAllowed(false)
-                .addMValueChangeListener(e -> {
-                    filter();
-                })
-                .withWidth("200px");
+
+        typedSelect.setEmptySelectionAllowed(false);
+        typedSelect.setTextInputAllowed(false);
+        typedSelect.setWidth("100%");
+        typedSelect.addValueChangeListener(e -> filter());
 
         return new MVerticalLayout()
                 .add(new MHorizontalLayout()
@@ -75,7 +68,11 @@ public class MonthStatisticsTab extends AbstractTab<YearMonth> {
     @Override
     public void onTabEnter() {
         layout.removeAllComponents();
-        typedSelect.setBeans(timeEntryService.fetchAllYearMonths());
+        List<YearMonth> items = timeEntryService.fetchAllYearMonths();
+        typedSelect.setItems(items);
+        if (typedSelect.getValue() == null && items != null && !items.isEmpty()) {
+            typedSelect.setValue(items.get(0));
+        }
         filter();
     }
 
@@ -92,18 +89,17 @@ public class MonthStatisticsTab extends AbstractTab<YearMonth> {
     private Component genHolidays(YearMonth filter) {
         Set<Holiday> holidaySet = holidayManagerService.getHolidays(filter);
 
-        MTextArea textArea = new MTextArea("Holidays")
-                .withValue(Joiner.on(",\t")
-                        .join(holidaySet.stream()
-                                .sorted(Comparator.comparing(Holiday::getDate))
-                                .map(h -> String.format("%s (Week: %d): %s",
-                                        h.getDate()
-                                                .format(DateTimeFormatter.ISO_DATE),
-                                        LocalDateConverter.convert(h.getDate())
-                                                .getWeekOfWeekyear(),
-                                        h.getDescription(UI.getCurrent()
-                                                .getLocale())))
-                                .collect(Collectors.toList())));
+        TextArea textArea = new TextArea("Holidays", Joiner.on(",\t")
+                .join(holidaySet.stream()
+                        .sorted(Comparator.comparing(Holiday::getDate))
+                        .map(h -> String.format("%s (Week: %d): %s",
+                                h.getDate()
+                                        .format(DateTimeFormatter.ISO_DATE),
+                                LocalDateConverter.convert(h.getDate())
+                                        .getWeekOfWeekyear(),
+                                h.getDescription(UI.getCurrent()
+                                        .getLocale())))
+                        .collect(Collectors.toList())));
         textArea.setVisible(holidaySet.size() > 0);
         textArea.setWidth("100%");
         textArea.setHeight("50px");
@@ -113,32 +109,39 @@ public class MonthStatisticsTab extends AbstractTab<YearMonth> {
     protected Component genTable(YearMonth yearMonth) {
         List<UserTimeline> userTimelineList = timeEntryService.getUserTimeLines(yearMonth);
 
-        MTable<UserTimeline> table = new MTable<>(UserTimeline.class)
-                .withGeneratedColumn("user", e -> {
-                    Image avatar = new Image(null,
-                            new ExternalResource(e.getUser()
-                                    .getAvatar()));
-                    avatar.setWidth("64px");
-                    avatar.setHeight("64px");
+        Grid<UserTimeline> grid = new Grid<>(null, userTimelineList.stream()
+                .sorted(Comparator.comparing(UserTimeline::totalMillisecondsWorked)
+                        .reversed())
+                .collect(Collectors.toList()));
+        grid.setSizeFull();
+        grid.setBodyRowHeight(150);
 
-                    return new MHorizontalLayout()
-                            .add(avatar)
-                            .add(new MVerticalLayout()
-                                    .withMargin(false)
-                                    .add(genLabelInfo("Name",
-                                            e.getUser()
-                                                    .getName()))
-                                    .add(genLabelInfo("Total", e.getTotalHoursFormatted()).withStyleName("left-right"))
-                                    .withFullWidth(), Alignment.MIDDLE_LEFT, 1)
-                            .withFullWidth()
-                            .withStyleName("cell-content-wrapper");
-                })
-                .withColumnWidth("user", 280)
-                .withSize(MSize.FULL_SIZE);
+        grid.addComponentColumn(e -> {
+            Image avatar = new Image(null,
+                    new ExternalResource(e.getUser()
+                            .getAvatar()));
+            avatar.setWidth("64px");
+            avatar.setHeight("64px");
+
+            return new MHorizontalLayout()
+                    .add(avatar, Alignment.MIDDLE_CENTER)
+                    .add(new MVerticalLayout()
+                            .withMargin(false)
+                            .add(genLabelInfo("Name",
+                                    e.getUser()
+                                            .getName()))
+                            .add(genLabelInfo("Total", e.getTotalHoursFormatted()).withStyleName("left-right"))
+                            .withFullWidth(), Alignment.MIDDLE_LEFT, 1)
+                    .withHeight("150px")
+                    .withFullWidth()
+                    .withStyleName("cell-content-wrapper");
+        })
+                .setCaption("user")
+                .setWidth(300);
 
         List<Integer> weekList = YearMonthUtil.getAllWeeksOfWeekyear(yearMonth);
         weekList.forEach(week -> {
-            table.withGeneratedColumn(String.valueOf(week), e -> {
+            grid.addComponentColumn(e -> {
                 if (e.getWeekStatisticsOfMonth()
                         .containsKey(week)) {
                     UserTimeline.WeekStatistics stat = e.getWeekStatisticsOfMonth()
@@ -146,6 +149,7 @@ public class MonthStatisticsTab extends AbstractTab<YearMonth> {
                     return new MVerticalLayout()
                             .withFullWidth()
                             .withMargin(false)
+                            .withSpacing(false)
                             .add(genLabelInfo("Total hours", stat.getTotalHours()))
                             .add(genLabelInfo("Billable hours", stat.getBillableHours()))
                             .add(genLabelInfo("Earned", stat.getBillableAmount()))
@@ -155,8 +159,9 @@ public class MonthStatisticsTab extends AbstractTab<YearMonth> {
                 } else {
                     return null;
                 }
-            });
-            table.setColumnWidth(String.valueOf(week), 190);
+            })
+                    .setCaption(String.valueOf(week))
+                    .setWidth(190);
         });
 
         List<String> properties = new ArrayList<>();
@@ -165,13 +170,7 @@ public class MonthStatisticsTab extends AbstractTab<YearMonth> {
                 .map(v -> String.valueOf(v))
                 .collect(Collectors.toList()));
 
-        table.withProperties(properties)
-                .setBeans(userTimelineList.stream()
-                        .sorted(Comparator.comparing(UserTimeline::totalMillisecondsWorked)
-                                .reversed())
-                        .collect(Collectors.toList()));
-
-        return table;
+        return grid;
     }
 
     private MLabel genLabelInfo(String caption, Number value) {

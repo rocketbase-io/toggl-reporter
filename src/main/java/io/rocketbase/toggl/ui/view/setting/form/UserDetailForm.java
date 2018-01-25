@@ -2,19 +2,14 @@ package io.rocketbase.toggl.ui.view.setting.form;
 
 import com.vaadin.server.ExternalResource;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Image;
+import com.vaadin.ui.*;
 import io.rocketbase.toggl.backend.model.ApplicationSetting.UserDetails;
 import io.rocketbase.toggl.backend.util.ColorPalette;
+import org.vaadin.viritin.fields.LabelField;
+import org.vaadin.viritin.form.AbstractForm;
 import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
-import org.vaadin.viritin.v7.MBeanFieldGroup;
-import org.vaadin.viritin.v7.fields.LabelField;
-import org.vaadin.viritin.v7.fields.TypedSelect;
-import org.vaadin.viritin.v7.fields.config.ComboBoxConfig;
-import org.vaadin.viritin.v7.form.AbstractForm;
 
 import java.util.Arrays;
 
@@ -24,53 +19,48 @@ import java.util.Arrays;
  */
 public class UserDetailForm extends AbstractForm<UserDetails> {
 
-    private LabelField name = new LabelField(String.class, "name");
+    private LabelField name = new LabelField("name");
 
-    private LabelField email = new LabelField(String.class, "email");
+    private LabelField email = new LabelField("email");
 
     private MLabel colorBox = new MLabel("")
             .withContentMode(ContentMode.HTML)
             .withWidth("37px")
             .withHeight("37px");
 
-    private TypedSelect<ColorPalette> graphColor = new TypedSelect<>(ColorPalette.class).asComboBoxType(ComboBoxConfig.build()
-            .withItemStyleGenerator((source, itemId) -> {
-                if (itemId instanceof ColorPalette) {
-                    return "color-palette " + ((ColorPalette) itemId).getStyleName();
-                }
-                return null;
-            }))
-            .setNullSelectionAllowed(false)
-            .setBeans(Arrays.asList(ColorPalette.values()))
-            .setCaptionGenerator(e -> e.name()
-                    .toLowerCase()
-                    .replace("_", " "))
-            .addMValueChangeListener(e -> {
-                colorBox.setValue(String.format("<div class=\"color-box\" style=\"background-color: #%s\"></div>",
-                        e.getValue()
-                                .getHexCode()));
-            })
-            .withFullWidth();
+    private ComboBox<ColorPalette> graphColor = new ComboBox<>("colors", Arrays.asList(ColorPalette.values()));
+
 
     private Image avatar;
 
     public UserDetailForm() {
-        super();
+        super(UserDetails.class);
         avatar = new Image(null, null);
         avatar.setWidth("64px");
         avatar.setHeight("64px");
 
+        graphColor.setStyleGenerator((StyleGenerator<ColorPalette>) colorPalette -> "color-palette " + colorPalette.getStyleName());
+        graphColor.setItemCaptionGenerator(e -> e.name()
+                .toLowerCase()
+                .replace("_", " "));
+        graphColor.setEmptySelectionAllowed(false);
+        graphColor.addValueChangeListener(e -> colorBox.setValue(String.format("<div class=\"color-box\" style=\"background-color: #%s\"></div>",
+                e.getValue()
+                        .getHexCode())));
+
+        getBinder().bind(email, "email");
+        getBinder().bind(name, "name");
+        getBinder().bind(graphColor, "graphColor");
     }
 
     @Override
-    public MBeanFieldGroup<UserDetails> setEntity(UserDetails entity) {
-        MBeanFieldGroup<UserDetails> result = super.setEntity(entity);
+    public void setEntity(UserDetails entity) {
+        super.setEntity(entity);
         if (entity != null) {
             avatar.setSource(new ExternalResource(entity.getAvatar()));
         } else {
             avatar.setSource(null);
         }
-        return result;
     }
 
     @Override

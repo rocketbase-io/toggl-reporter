@@ -2,16 +2,16 @@ package io.rocketbase.toggl.ui.view.setting.tab;
 
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.DateField;
 import io.rocketbase.toggl.backend.config.TogglService;
 import io.rocketbase.toggl.backend.model.ApplicationSetting.SchedulingConfig;
+import io.rocketbase.toggl.backend.util.LocalDateConverter;
 import io.rocketbase.toggl.ui.component.tab.AbstractTab;
-import org.joda.time.LocalDate;
 import org.vaadin.viritin.button.PrimaryButton;
 import org.vaadin.viritin.label.RichText;
 import org.vaadin.viritin.layouts.MVerticalLayout;
-import org.vaadin.viritin.v7.fields.MCheckBox;
-import org.vaadin.viritin.v7.fields.MDateField;
 
 import javax.annotation.Resource;
 
@@ -25,16 +25,16 @@ public class SchedulingTab extends AbstractTab {
     @Resource
     private TogglService togglService;
 
-    private MCheckBox enableScheduling;
+    private CheckBox enableScheduling;
 
-    private MDateField startSchedulingFrom;
+    private DateField startSchedulingFrom;
 
     @Override
     public Component initLayout() {
-        enableScheduling = new MCheckBox("enable scheduling", false)
-                .withValueChangeListener(e -> checkStatus());
+        enableScheduling = new CheckBox("enable scheduling", false);
+        enableScheduling.addValueChangeListener(e -> checkStatus());
 
-        startSchedulingFrom = new MDateField("scheduling start from");
+        startSchedulingFrom = new DateField("scheduling start from");
         checkStatus();
 
         return new MVerticalLayout()
@@ -45,7 +45,7 @@ public class SchedulingTab extends AbstractTab {
                 .add(startSchedulingFrom)
                 .add(new PrimaryButton("Save", event -> {
                     togglService.updateSchedulingConfig(new SchedulingConfig(enableScheduling.getValue(),
-                            LocalDate.fromDateFields(startSchedulingFrom.getValue())));
+                            LocalDateConverter.convert(startSchedulingFrom.getValue())));
                 }))
                 .withFullWidth();
     }
@@ -62,9 +62,10 @@ public class SchedulingTab extends AbstractTab {
                     .isEnableScheduling());
 
             startSchedulingFrom.setValue(schedulingConfig
-                    .getStartSchedulingFrom() != null ? schedulingConfig
-                    .getStartSchedulingFrom()
-                    .toDate() : null);
+                    .getStartSchedulingFrom() != null ?
+                    LocalDateConverter.convert(
+                            schedulingConfig
+                                    .getStartSchedulingFrom()) : null);
         }
         checkStatus();
     }

@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,35 +31,32 @@ public class FetchAndStoreService {
     private TogglService togglService;
 
     @SneakyThrows
-    public void fetchBetween(Date from, Date to) {
+    public void fetchBetween(LocalDate from, LocalDate to) {
 
 
         DateTime fetchedDate = DateTime.now();
         List<TimeEntry> timeEntryList = new ArrayList<>();
 
-        LocalDate fromAsLocalDate = LocalDate.fromDateFields(from);
-        LocalDate toAsLocalDate = LocalDate.fromDateFields(to);
-
-        if (Days.daysBetween(fromAsLocalDate, toAsLocalDate)
+        if (Days.daysBetween(from, to)
                 .getDays() > 100) {
-            LocalDate startFrom = LocalDate.fromDateFields(from);
+            LocalDate startFrom = from;
             do {
                 LocalDate toSub = startFrom.plusDays(99);
-                if (toAsLocalDate.isBefore(toSub)) {
-                    toSub = toAsLocalDate;
+                if (to.isBefore(toSub)) {
+                    toSub = to;
                 }
                 timeEntryList.addAll(fetch(startFrom, toSub));
                 startFrom = startFrom.plusDays(100);
-            } while (startFrom.isBefore(toAsLocalDate));
+            } while (startFrom.isBefore(to));
         } else {
-            timeEntryList.addAll(fetch(fromAsLocalDate, toAsLocalDate));
+            timeEntryList.addAll(fetch(from, to));
         }
 
         dateTimeEntryGroupRepository.deleteByWorkspaceIdAndDateBetween(togglService.getWorkspaceId(),
-                LocalDate.fromDateFields(from)
+                from
                         .minusDays(1)
                         .toDate(),
-                toAsLocalDate
+                to
                         .plusDays(1)
                         .toDate());
 

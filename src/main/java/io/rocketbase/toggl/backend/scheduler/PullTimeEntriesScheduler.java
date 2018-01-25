@@ -29,9 +29,7 @@ public class PullTimeEntriesScheduler {
             long startTime = System.currentTimeMillis();
             LocalDate start = schedulingConfig.getLastFinishedDate() != null ? schedulingConfig.getLastFinishedDate() : schedulingConfig.getStartSchedulingFrom();
 
-            fetchAndStoreService.fetchBetween(start.toDate(),
-                    LocalDate.now()
-                            .toDate());
+            fetchAndStoreService.fetchBetween(start, LocalDate.now());
 
             schedulingConfig.setLastFinishedDate(LocalDate.now());
             togglService.updateSchedulingConfig(schedulingConfig);

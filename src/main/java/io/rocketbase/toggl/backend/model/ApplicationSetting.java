@@ -9,8 +9,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.DayOfWeek;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static io.rocketbase.toggl.backend.model.ApplicationSetting.COLLECTION_NAME;
 
@@ -39,7 +39,7 @@ public class ApplicationSetting {
 
     private HolidayCalendar holidayCalendar;
 
-    private List<DayOfWeek> regularWorkinsDays;
+    private Set<DayOfWeek> regularWorkinsDays;
 
     private SchedulingConfig schedulingConfig = SchedulingConfig.EMPTY;
 
@@ -70,7 +70,6 @@ public class ApplicationSetting {
 
         private final LocalDate startSchedulingFrom;
 
-        @Setter
         private LocalDate lastFinishedDate;
     }
 

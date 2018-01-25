@@ -1,51 +1,53 @@
 package io.rocketbase.toggl.ui.view.setting.form;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.*;
 import io.rocketbase.toggl.backend.security.MongoUserDetails;
 import io.rocketbase.toggl.backend.security.UserRole;
+import org.vaadin.viritin.form.AbstractForm;
 import org.vaadin.viritin.layouts.MVerticalLayout;
-import org.vaadin.viritin.v7.fields.MCheckBox;
-import org.vaadin.viritin.v7.fields.MPasswordField;
-import org.vaadin.viritin.v7.fields.MTextField;
-import org.vaadin.viritin.v7.fields.TypedSelect;
-import org.vaadin.viritin.v7.form.AbstractForm;
 
 import java.util.Arrays;
 
 public class MongoUserForm extends AbstractForm<MongoUserDetails> {
 
-    private MTextField username = new MTextField("username").withFullWidth();
+    private TextField username = new TextField("username");
 
-    private MPasswordField newPassword = new MPasswordField("password").withFullWidth();
+    private PasswordField newPassword = new PasswordField("password");
 
-    private MCheckBox enabled = new MCheckBox("enabled");
+    private CheckBox enabled = new CheckBox("enabled");
 
     private boolean createNew = false;
 
-    private TypedSelect<UserRole> role = new TypedSelect<>(UserRole.class).asComboBoxType()
-            .setNullSelectionAllowed(false)
-            .setBeans(Arrays.asList(UserRole.values()))
-            .setCaptionGenerator(e -> e.name()
-                    .toLowerCase()
-                    .replace("_", " "))
-            .withFullWidth();
+    private ComboBox<UserRole> role = new ComboBox("role", Arrays.asList(UserRole.values()));
 
     private Image avatar;
 
     public MongoUserForm(MongoUserDetails bean) {
-        super();
+        super(MongoUserDetails.class);
+
+        username.setWidth("100%");
+        newPassword.setWidth("100%");
+
+        role.setWidth("100%");
+        role.setItemCaptionGenerator(e -> e.name()
+                .toLowerCase()
+                .replace("_", " "));
+
+
         setModalWindowTitle("edit login-user");
         setEntity(bean);
         newPassword.setVisible(false);
+
+
+        getBinder().bind(username, "username");
+        getBinder().bind(enabled, "enabled");
+        getBinder().bind(role, "role");
     }
 
     public Window initCreateWindow(SavedHandler<MongoUserDetails> handler) {
         createNew = true;
         setSaveCaption("create");
         newPassword.setVisible(true);
-        newPassword.setRequired(true);
 
         Window window = openInModalPopup();
         window.setWidth("500px");

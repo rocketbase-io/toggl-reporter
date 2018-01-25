@@ -36,6 +36,7 @@ public class MongoUserDetails implements UserDetails {
     @DBRef
     private Worker worker;
 
+    @Builder.Default
     private boolean enabled = true;
 
     @Override

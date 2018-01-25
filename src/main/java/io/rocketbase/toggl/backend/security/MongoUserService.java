@@ -1,5 +1,6 @@
 package io.rocketbase.toggl.backend.security;
 
+import io.rocketbase.toggl.backend.model.Worker;
 import io.rocketbase.toggl.backend.repository.MongoUserDetailsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -69,6 +70,13 @@ public class MongoUserService {
         MongoUserDetails dbEntity = repository.findByUsername(user.getUsername())
                 .get();
         dbEntity.setPassword(encoder.encode(newPassword));
+        return repository.save(dbEntity);
+    }
+
+    public MongoUserDetails updateWorker(MongoUserDetails user, Worker worker) {
+        MongoUserDetails dbEntity = repository.findByUsername(user.getUsername())
+                .get();
+        dbEntity.setWorker(worker);
         return repository.save(dbEntity);
     }
 }

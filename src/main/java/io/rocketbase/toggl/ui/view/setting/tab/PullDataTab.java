@@ -11,6 +11,7 @@ import io.rocketbase.toggl.backend.model.DateTimeEntryGroup;
 import io.rocketbase.toggl.backend.model.report.UserTimeline;
 import io.rocketbase.toggl.backend.service.FetchAndStoreService;
 import io.rocketbase.toggl.backend.service.TimeEntryService;
+import io.rocketbase.toggl.backend.util.LocalDateConverter;
 import io.rocketbase.toggl.ui.component.tab.AbstractTab;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
@@ -22,8 +23,6 @@ import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 import org.vaadin.viritin.layouts.MWindow;
-import org.vaadin.viritin.v7.fields.MDateField;
-import org.vaadin.viritin.v7.fields.TypedSelect;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -69,17 +68,15 @@ public class PullDataTab extends AbstractTab {
                 () -> timeEntryService.countAll());
     }
 
-    private TypedSelect<Workspace> initWorkspaceSelect() {
+    private ComboBox<Workspace> initWorkspaceSelect() {
         List<Workspace> workspaces = togglService.getJToggl()
                 .getWorkspaces();
 
-        TypedSelect<Workspace> workspaceTypedSelect = new TypedSelect<>(Workspace.class).asComboBoxType()
-                .withCaption("workspace")
-                .setBeans(workspaces)
-                .setCaptionGenerator(w -> w.getName())
-                .setNullSelectionAllowed(false)
-                .addMValueChangeListener(e -> togglService.setWorkspace(e.getValue()))
-                .withFullWidth();
+        ComboBox<Workspace> workspaceTypedSelect = new ComboBox("workspace", workspaces);
+        workspaceTypedSelect.setItemCaptionGenerator(w -> w.getName());
+        workspaceTypedSelect.setEmptySelectionAllowed(false);
+        workspaceTypedSelect.setWidth("100%");
+        workspaceTypedSelect.addValueChangeListener(e -> togglService.setWorkspace(e.getValue()));
 
         workspaces.forEach(w -> {
             if (w.getId()
@@ -93,12 +90,14 @@ public class PullDataTab extends AbstractTab {
 
 
     private MHorizontalLayout initFetchSelection() {
-        TypedSelect<Workspace> workspaceTypedSelect = initWorkspaceSelect();
+        ComboBox<Workspace> workspaceTypedSelect = initWorkspaceSelect();
         boolean workspaceSelected = workspaceTypedSelect.getValue() != null;
 
-        MDateField from = new MDateField("from").withFullWidth();
+        DateField from = new DateField("from");
+        from.setWidth("100%");
         from.setEnabled(workspaceSelected);
-        MDateField to = new MDateField("to").withFullWidth();
+        DateField to = new DateField("to");
+        to.setWidth("100%");
         to.setEnabled(workspaceSelected);
 
         MButton fetch = new MButton(VaadinIcons.DOWNLOAD, "fetch", e -> {
@@ -111,7 +110,7 @@ public class PullDataTab extends AbstractTab {
 
                 new Thread(() -> {
                     UI.setCurrent(ui);
-                    fetchAndStoreService.fetchBetween(from.getValue(), to.getValue());
+                    fetchAndStoreService.fetchBetween(LocalDateConverter.convert(from.getValue()), LocalDateConverter.convert(to.getValue()));
 
                     ui.access(() -> {
                         waitWindow.close();
@@ -126,7 +125,7 @@ public class PullDataTab extends AbstractTab {
         });
         fetch.setEnabled(workspaceSelected);
 
-        workspaceTypedSelect.addMValueChangeListener(e -> {
+        workspaceTypedSelect.addValueChangeListener(e -> {
             from.setEnabled(e != null);
             to.setEnabled(e != null);
             fetch.setEnabled(e != null);
