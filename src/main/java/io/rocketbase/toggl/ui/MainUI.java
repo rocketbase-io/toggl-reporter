@@ -1,8 +1,6 @@
 package io.rocketbase.toggl.ui;
 
 import com.vaadin.annotations.StyleSheet;
-import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.Widgetset;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
@@ -24,9 +22,7 @@ import javax.annotation.Resource;
  * Created by marten on 20.02.17.
  */
 @SpringUI(path = "/app")
-@Theme("valo")
 @StyleSheet("design.css")
-@Widgetset("com.vaadin.v7.Vaadin7WidgetSet")
 public class MainUI extends UI {
 
     @Resource

@@ -144,11 +144,7 @@
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-compatibility-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-compatibility-client-compiled</artifactId>
+            <artifactId>vaadin-client-compiled</artifactId>
         </dependency>
 
         <dependency>
