@@ -42,8 +42,10 @@ public class WorkerView extends AbstractView {
 
     private Window contractTermsFormWindow = null;
 
+
     public WorkerView() {
         super(VIEW_NAME, "Worker", VaadinIcons.USERS, 10);
+        setDevelopmentMode(true);
         setUserRole(UserRole.ROLE_ADMIN);
     }
 

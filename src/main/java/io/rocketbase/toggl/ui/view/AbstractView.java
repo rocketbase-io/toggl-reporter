@@ -19,10 +19,18 @@ import lombok.Setter;
 public abstract class AbstractView extends CustomComponent implements View {
 
     private final String viewName;
+
     private final String caption;
+
     private final FontIcon icon;
+
     private final int order;
+
     protected boolean initialized = false;
+
+    @Getter
+    @Setter
+    private boolean developmentMode = false;
 
     @Setter(AccessLevel.PROTECTED)
     private UserRole userRole = UserRole.ROLE_USER;

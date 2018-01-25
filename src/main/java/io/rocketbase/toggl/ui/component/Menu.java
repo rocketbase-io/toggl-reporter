@@ -53,6 +53,9 @@ public class Menu extends CssLayout {
     @Resource
     private MongoUserService mongoUserService;
 
+    @Value("${development.mode.active:false}")
+    private boolean developmentMode;
+
     @PostConstruct
     public void postConstruct() {
         setPrimaryStyleName(ValoTheme.MENU_ROOT);
@@ -154,7 +157,9 @@ public class Menu extends CssLayout {
             final Class<?> type = applicationContext.getType(beanName);
             if (AbstractView.class.isAssignableFrom(type)) {
                 AbstractView view = (AbstractView) applicationContext.getBean(type);
-                menuEntries.add(new MenuEntry(view.getViewName(), view.getCaption(), view.getIcon(), view.getOrder(), view.getUserRole()));
+                if ((view.isDevelopmentMode() && developmentMode) || !view.isDevelopmentMode()) {
+                    menuEntries.add(new MenuEntry(view.getViewName(), view.getCaption(), view.getIcon(), view.getOrder(), view.getUserRole()));
+                }
             }
         }
         AtomicInteger roleOrdinal = new AtomicInteger(getLoggedInUser().getRole()
